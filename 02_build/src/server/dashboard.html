@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRE Northstar — Deal Dashboard</title>
+<style>
+  :root { --navy:#344754; --charcoal:#424143; --lime:#8cc040; --teal:#87c1bf; --gray:#bcbec0; --mist:#eaedf2; --off:#f8f9fa; }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: Calibri, "Segoe UI", sans-serif; color: var(--charcoal); background: var(--off); display: flex; min-height: 100vh; }
+  h1,h2,h3 { font-family: Georgia, serif; color: var(--navy); }
+  aside { width: 230px; background: var(--navy); color: #fff; padding: 28px 20px; flex-shrink: 0; display:flex; flex-direction:column; }
+  .wordmark { font-family: Georgia, serif; font-size: 19px; letter-spacing: .04em; }
+  .wordmark b { color: var(--lime); }
+  .deal-tag { font-size: 12px; color: var(--teal); margin-top: 6px; min-height: 15px; }
+  nav { margin-top: 36px; }
+  .step { display:flex; align-items:center; gap:10px; padding:10px 8px; border-radius:6px; font-size:14px; color:#ffffffb0; }
+  .step .n { width:22px; height:22px; border-radius:50%; border:1.5px solid #ffffff60; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+  .step.active { background:#ffffff14; color:#fff; }
+  .step.active .n { background: var(--lime); border-color: var(--lime); color: var(--navy); font-weight:700; }
+  .step.done { color:#fff; }
+  .step.done .n { background: var(--teal); border-color: var(--teal); color: var(--navy); }
+  .live-badge { margin-top:auto; font-size:11px; color:#ffffff80; border:1px solid #ffffff30; border-radius:6px; padding:8px 10px; line-height:1.5; }
+  .live-badge b { color: var(--lime); }
+  main { flex:1; padding: 36px 44px; max-width: 1060px; }
+  .screen { display:none; } .screen.on { display:block; }
+  .kicker { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--lime); }
+  h1 { font-size: 26px; margin: 4px 0 6px; }
+  .sub { color:#6b6d6e; margin-bottom: 26px; max-width: 660px; }
+  .btn { font-family: Calibri, sans-serif; font-size:15px; font-weight:700; border:none; border-radius:6px; padding:11px 22px; cursor:pointer; }
+  .btn-primary { background: var(--lime); color: var(--navy); }
+  .btn-primary:disabled { background: var(--gray); color:#fff; cursor:not-allowed; }
+  .btn-ghost { background:none; border:1.5px solid var(--gray); color:var(--charcoal); }
+  #err { display:none; background:#f6e3e3; border-left:4px solid #a04545; color:#7c3333; border-radius:8px; padding:13px 16px; margin-bottom:18px; font-size:14px; }
+
+  .field-row { margin-bottom:18px; max-width:560px; }
+  .field-row label { display:block; font-weight:700; color:var(--navy); font-size:14px; margin-bottom:6px; }
+  .field-row input[type=text], .field-row select { width:100%; font:inherit; padding:10px 12px; border:1.5px solid var(--gray); border-radius:6px; background:#fff; }
+  .cards { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin:6px 0 24px; max-width:820px; }
+  .cards.brand-cards { grid-template-columns: repeat(5,1fr); max-width:820px; }
+  .card { background:#fff; border:1.5px dashed var(--gray); border-radius:10px; padding:18px 16px; text-align:center; min-height:150px; display:flex; flex-direction:column; justify-content:center; gap:6px; cursor:pointer; position:relative; overflow:hidden; }
+  .card:hover { border-color: var(--teal); }
+  .card .ico { font-size:26px; }
+  .card .t { font-weight:700; color:var(--navy); font-size:14px; }
+  .card .d { font-size:12px; color:#8a8c8d; }
+  .card.filled { border:1.5px solid var(--teal); }
+  .card .chk { color:#5a8f28; font-weight:700; font-size:12px; min-height:15px; word-break:break-all; }
+  .card .req { font-size:10.5px; font-weight:700; letter-spacing:.05em; color:var(--lime); }
+  .card.brand-card { min-height:140px; padding:12px 10px; }
+  .card.brand-card .t { font-size:12.5px; }
+  .card.brand-card .d { font-size:11px; }
+  .card .thumb { position:absolute; inset:0; border-radius:8px; background-size:cover; background-position:center; opacity:0; transition: opacity .15s; }
+  .card.filled .thumb { opacity:1; }
+  .card .thumb-overlay { position:absolute; inset:auto 0 0 0; padding:4px 6px; font-size:11px; color:#fff; background:linear-gradient(transparent, #00000099); border-radius:0 0 8px 8px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card.filled .thumb-overlay { display:block; } .card .thumb-overlay { display:none; }
+
+  .tabs { display:flex; gap:2px; margin: 4px 0 12px; border-bottom:1.5px solid var(--mist); max-width:820px; }
+  .tab { padding:9px 16px; font-size:13.5px; font-weight:700; color:#8a8c8d; background:none; border:none; cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; }
+  .tab.on { color:var(--navy); border-bottom-color: var(--lime); }
+  .tab .badge { display:inline-block; background:var(--teal); color:var(--navy); border-radius:9px; padding:1px 7px; font-size:11px; margin-left:6px; font-weight:800; }
+  .tab-pane { display:none; } .tab-pane.on { display:block; }
+  .tab-note { font-size:12.5px; color:#6b6d6e; margin: 0 0 10px; max-width:660px; }
+
+  .parsers { display:flex; flex-direction:column; gap:16px; max-width:560px; }
+  .parser { background:#fff; border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px #00000014; font-size:14px; font-weight:700; color:var(--navy); }
+  .bar { height:6px; background:var(--mist); border-radius:3px; margin-top:10px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:30%; background:var(--lime); border-radius:3px; animation: slide 1.6s ease-in-out infinite; }
+  @keyframes slide { 0%{margin-left:0} 50%{margin-left:70%} 100%{margin-left:0} }
+  .phase-note { font-size:13px; color:#6b6d6e; margin-top:14px; }
+
+  .gate-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .counts { font-size:13px; color:#6b6d6e; } .counts b { color:var(--navy); }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 1px 3px #00000014; font-size:13px; }
+  th { background:var(--navy); color:#fff; text-align:left; padding:9px 12px; font-size:12px; position:sticky; top:0; }
+  td { padding:8px 12px; border-bottom:1px solid var(--mist); vertical-align:top; }
+  .fieldp { font-size:13px; font-weight:600; color:var(--navy); }
+  .val { max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .src { font-size:12px; color:#8a8c8d; white-space:nowrap; }
+  .conf { font-size:12px; } .conf.hi { color:#5a8f28; } .conf.mid { color:#b07d1e; }
+  .chip { display:inline-block; font-size:10.5px; font-weight:700; border-radius:4px; padding:2px 7px; }
+  .chip.conflict { background:#fdf1dc; color:#9a6b12; }
+  .chip.approved { background:#eaf4dd; color:#5a8f28; }
+  .chip.edited { background:#e3f0ef; color:#3e7d7a; }
+  .chip.rejected { background:#f6e3e3; color:#a04545; }
+  .acts { white-space:nowrap; }
+  .acts button { border:none; background:var(--mist); border-radius:5px; padding:4px 9px; margin-right:4px; cursor:pointer; font-size:12px; }
+  .acts button:hover { background:var(--teal); color:#fff; }
+  .note-line { font-size:11.5px; color:#9a6b12; margin-top:3px; white-space:normal; }
+  .gaps { background:#fff; border-left:4px solid var(--teal); border-radius:8px; padding:14px 18px; margin:18px 0; font-size:13px; }
+  .gate-foot { display:flex; gap:12px; align-items:center; margin-top:20px; flex-wrap:wrap; }
+  td input { font:inherit; width:100%; border:1.5px solid var(--teal); border-radius:4px; padding:3px 6px; }
+
+  .out-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px; }
+  .out { background:#fff; border-radius:10px; padding:16px; box-shadow:0 1px 3px #00000014; font-size:13px; }
+  .out .t { font-weight:700; color:var(--navy); font-size:14px; margin-bottom:6px; }
+  .out.live { border-top:3px solid var(--lime); }
+  .out .links { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+  .out .links a { font-size:12px; font-weight:700; color:var(--navy); background:var(--mist); border-radius:5px; padding:6px 10px; text-decoration:none; }
+  .run-stats { font-size:12.5px; color:#6b6d6e; margin-bottom:22px; } .run-stats b { color:var(--navy); }
+  iframe.preview { width:100%; height:640px; border:none; background:#fff; box-shadow:0 2px 10px #00000022; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="wordmark">CRE <b>NORTHSTAR</b></div>
+  <div class="deal-tag" id="dealTag"></div>
+  <nav>
+    <div class="step" id="nav1"><span class="n">1</span> Upload documents</div>
+    <div class="step" id="nav2"><span class="n">2</span> Review extraction</div>
+    <div class="step" id="nav3"><span class="n">3</span> Generate</div>
+    <div class="step" id="nav4"><span class="n">4</span> Marketing package</div>
+  </nav>
+  <div class="live-badge"><b>LIVE</b> — this dashboard runs the real pipeline on your machine. Documents you upload stay local; only the extraction calls go to the AI.</div>
+</aside>
+
+<main>
+  <div id="err"></div>
+
+  <!-- 1 · UPLOAD -->
+  <section class="screen on" id="s1">
+    <div class="kicker">Step 1 of 4</div>
+    <h1>Start a new deal</h1>
+    <p class="sub">Upload what you have — only the Offering Memo is required. CRE Northstar extracts every marketable fact with its source; anything your documents don't mention is simply left out, never guessed. Nothing is published until you approve the numbers.</p>
+    <div class="field-row"><label>Deal name</label><input type="text" id="dealName" placeholder="e.g. Hillcrest Gardens"></div>
+
+    <div class="tabs">
+      <button class="tab on" id="tab-docs" onclick="showTab('docs')">Documents</button>
+      <button class="tab" id="tab-brand" onclick="showTab('brand')">Brand assets <span class="badge" id="brand-count" style="display:none">0</span></button>
+    </div>
+
+    <div class="tab-pane on" id="pane-docs">
+      <div class="cards">
+        <div class="card" id="c-om" onclick="pick('om')"><div class="ico">📕</div><div class="t">Offering Memo</div><div class="d">PDF · up to 25 MB</div><div class="req">REQUIRED TO START</div><div class="chk" id="n-om"></div></div>
+        <div class="card" id="c-rr" onclick="pick('rentRoll')"><div class="ico">📊</div><div class="t">Rent Roll</div><div class="d">XLSX or CSV · optional</div><div class="req">&nbsp;</div><div class="chk" id="n-rentRoll"></div></div>
+        <div class="card" id="c-t12" onclick="pick('t12')"><div class="ico">📈</div><div class="t">T12 Operating Stmt</div><div class="d">XLSX or CSV · optional</div><div class="req">&nbsp;</div><div class="chk" id="n-t12"></div></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="pane-brand">
+      <p class="tab-note">Optional. Add up to four property photos and your brokerage logo. Logo backgrounds are removed and inverted for dark placements automatically — all processing runs locally on your machine.</p>
+      <div class="cards brand-cards">
+        <div class="card brand-card" id="c-photo1" onclick="pick('photo1')"><div class="thumb" id="thumb-photo1"></div><div class="ico">🏢</div><div class="t">Photo 1</div><div class="d">JPG or PNG</div><div class="chk" id="n-photo1"></div><div class="thumb-overlay" id="ov-photo1"></div></div>
+        <div class="card brand-card" id="c-photo2" onclick="pick('photo2')"><div class="thumb" id="thumb-photo2"></div><div class="ico">🏢</div><div class="t">Photo 2</div><div class="d">JPG or PNG</div><div class="chk" id="n-photo2"></div><div class="thumb-overlay" id="ov-photo2"></div></div>
+        <div class="card brand-card" id="c-photo3" onclick="pick('photo3')"><div class="thumb" id="thumb-photo3"></div><div class="ico">🏢</div><div class="t">Photo 3</div><div class="d">JPG or PNG</div><div class="chk" id="n-photo3"></div><div class="thumb-overlay" id="ov-photo3"></div></div>
+        <div class="card brand-card" id="c-photo4" onclick="pick('photo4')"><div class="thumb" id="thumb-photo4"></div><div class="ico">🏢</div><div class="t">Photo 4</div><div class="d">JPG or PNG</div><div class="chk" id="n-photo4"></div><div class="thumb-overlay" id="ov-photo4"></div></div>
+        <div class="card brand-card" id="c-logo" onclick="pick('logo')"><div class="thumb" id="thumb-logo" style="background-color:#fff;background-size:contain;background-repeat:no-repeat"></div><div class="ico">🏷️</div><div class="t">Logo</div><div class="d">JPG or PNG</div><div class="chk" id="n-logo"></div><div class="thumb-overlay" id="ov-logo"></div></div>
+      </div>
+    </div>
+
+    <input type="file" id="f-om" accept=".pdf" hidden>
+    <input type="file" id="f-rentRoll" accept=".xlsx,.csv" hidden>
+    <input type="file" id="f-t12" accept=".xlsx,.csv" hidden>
+    <input type="file" id="f-photo1" accept=".jpg,.jpeg,.png" hidden>
+    <input type="file" id="f-photo2" accept=".jpg,.jpeg,.png" hidden>
+    <input type="file" id="f-photo3" accept=".jpg,.jpeg,.png" hidden>
+    <input type="file" id="f-photo4" accept=".jpg,.jpeg,.png" hidden>
+    <input type="file" id="f-logo" accept=".jpg,.jpeg,.png" hidden>
+    <div class="field-row"><label>Package</label><select id="workflow"></select></div>
+    <button class="btn btn-primary" id="processBtn" disabled>Process deal →</button>
+  </section>
+
+  <!-- 2a · EXTRACTING -->
+  <section class="screen" id="s2a">
+    <div class="kicker">Step 2 of 4</div>
+    <h1 id="extractTitle">Reading your documents…</h1>
+    <p class="sub">Each parser reads its document and records every value with source, page/row, and a confidence score. Larger OMs take a few minutes.</p>
+    <div class="parsers" id="parserList"></div>
+    <p class="phase-note" id="extractNote"></p>
+  </section>
+
+  <!-- 2 · REVIEW -->
+  <section class="screen" id="s2">
+    <div class="kicker">Step 2 of 4 · Review gate</div>
+    <h1>Approve the numbers before anything is written</h1>
+    <p class="sub" id="gateSub"></p>
+    <div class="gate-head">
+      <div class="counts" id="counts"></div>
+      <button class="btn btn-ghost" id="approveAll">Approve all remaining</button>
+    </div>
+    <div style="max-height:430px; overflow:auto; border-radius:10px;">
+      <table id="candTable"><thead><tr><th>Field</th><th>Extracted value</th><th>Source</th><th>Conf.</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="gaps" id="gaps" style="display:none"></div>
+    <div class="gate-foot">
+      <button class="btn btn-primary" id="toGen" disabled>Generate package →</button>
+      <span class="counts" id="gateHint"></span>
+    </div>
+  </section>
+
+  <!-- 3 · GENERATING -->
+  <section class="screen" id="s3">
+    <div class="kicker">Step 3 of 4</div>
+    <h1>Building your package…</h1>
+    <p class="sub">Generators only use the numbers you approved. A value you rejected simply doesn't appear — it is never estimated.</p>
+    <div class="parsers"><div class="parser"><span id="genPhase">Assembling deal facts…</span><div class="bar"><i></i></div></div></div>
+  </section>
+
+  <!-- 4 · DELIVER -->
+  <section class="screen" id="s4">
+    <div class="kicker">Step 4 of 4 · Deal room</div>
+    <h1 id="doneTitle">Marketing package</h1>
+    <p class="run-stats" id="doneStats"></p>
+    <div class="gaps" id="doneNotes" style="display:none"></div>
+    <div class="out-grid" id="outGrid"></div>
+    <div id="previewWrap"></div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const OUT_META = {
+  "investment-summary": ["Investment Summary", "One-page teaser for first outreach."],
+  "executive-memo": ["Executive Memo", "The “tell me more” document."],
+  "linkedin-announcement": ["LinkedIn Announcement", "Post copy, under the “see more” fold."],
+  "investor-email": ["Investor Email", "3 subject lines + body for the blast."],
+  "pptx-om": ["PowerPoint OM", "Full offering deck."],
+  "property-website": ["Property Website", "The shareable listing link."],
+  "press-release": ["Press Release", "Wire format, draft quote flagged."],
+  "dd-checklist": ["Due Diligence Checklist", "Internal only — never in the marketing export."],
+  "crm-entry": ["CRM Entry", "Structured record with asset links."],
+};
+let dealId = null;
+let candidates = [];
+const state = {};
+
+function go(n) {
+  ["s1","s2a","s2","s3","s4"].forEach(s => $(s).classList.remove("on"));
+  $({1:"s1",2:"s2a",2.5:"s2",3:"s3",4:"s4"}[n]).classList.add("on");
+  for (let i=1;i<=4;i++) {
+    $("nav"+i).classList.toggle("active", Math.floor(n)===i || (n===2.5&&i===2));
+    $("nav"+i).classList.toggle("done", i < Math.floor(n) || (n===2.5&&i<2));
+  }
+}
+function showErr(msg) { $("err").style.display = msg ? "block" : "none"; $("err").textContent = msg ?? ""; }
+
+// --- workflows ---
+fetch("/api/workflows").then(r=>r.json()).then(ws => {
+  $("workflow").innerHTML = ws.map(w=>`<option value="${w.id}" ${w.id==="full-package"?"selected":""}>${w.name} — ${w.outputs.length} output${w.outputs.length>1?"s":""}</option>`).join("");
+});
+
+// --- upload ---
+const chosen = {};
+const BRAND_SLOTS = ["photo1","photo2","photo3","photo4","logo"];
+const DOC_SLOTS = ["om","rentRoll","t12"];
+function pick(slot) { $("f-"+slot).click(); }
+function showTab(name) {
+  ["docs","brand"].forEach(n => {
+    $("tab-"+n).classList.toggle("on", n===name);
+    $("pane-"+n).classList.toggle("on", n===name);
+  });
+}
+function updateBrandBadge() {
+  const n = BRAND_SLOTS.filter(s => chosen[s]).length;
+  const b = $("brand-count");
+  b.textContent = n;
+  b.style.display = n ? "inline-block" : "none";
+}
+function docCardId(slot) { return "c-"+(slot==="om"?"om":slot==="rentRoll"?"rr":"t12"); }
+
+DOC_SLOTS.forEach(slot => {
+  $("f-"+slot).addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    chosen[slot] = f;
+    $("n-"+slot).textContent = "✓ " + f.name;
+    $(docCardId(slot)).classList.add("filled");
+    $("processBtn").disabled = !chosen.om && !chosen.rentRoll && !chosen.t12;
+  });
+});
+
+BRAND_SLOTS.forEach(slot => {
+  $("f-"+slot).addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    chosen[slot] = f;
+    $("n-"+slot).textContent = "";
+    $("ov-"+slot).textContent = f.name;
+    $("c-"+slot).classList.add("filled");
+    // local preview via object URL — no upload yet, no cost
+    const url = URL.createObjectURL(f);
+    $("thumb-"+slot).style.backgroundImage = `url("${url}")`;
+    updateBrandBadge();
+  });
+});
+
+$("processBtn").onclick = async () => {
+  showErr(null);
+  $("processBtn").disabled = true;
+  const fd = new FormData();
+  fd.append("dealName", $("dealName").value || "deal");
+  for (const [slot, f] of Object.entries(chosen)) fd.append(slot, f);
+  try {
+    const up = await fetch("/api/upload", { method: "POST", body: fd }).then(r=>r.json());
+    if (up.error) throw new Error(up.error);
+    dealId = up.dealId;
+    location.hash = "deal=" + dealId; // bookmarkable — reload re-attaches to this deal
+    $("dealTag").textContent = "Deal · " + ($("dealName").value || dealId);
+    const parserLabel = { om: "Offering Memo parser", rentRoll: "Rent Roll parser", t12: "T12 parser" };
+    const parserRows = Object.keys(up.files).filter(k => parserLabel[k]).map(k =>
+      `<div class="parser">${parserLabel[k]}<div class="bar"><i></i></div></div>`);
+    const brandFiles = Object.keys(up.files).filter(k => /^photo[1-4]$|^logo$/.test(k));
+    if (brandFiles.length) parserRows.push(
+      `<div class="parser">Brand assets — ${brandFiles.length} file${brandFiles.length>1?"s":""} (local processing)<div class="bar"><i></i></div></div>`);
+    $("parserList").innerHTML = parserRows.join("");
+    go(2);
+    await fetch("/api/extract?deal="+dealId, { method: "POST" });
+    pollExtract();
+  } catch (e) { showErr(e.message); $("processBtn").disabled = false; }
+};
+
+async function pollExtract() {
+  const s = await fetch("/api/status?deal="+dealId).then(r=>r.json());
+  if (s.phase === "error") { showErr("Extraction failed: " + s.error); go(1); $("processBtn").disabled = false; return; }
+  if (s.phase === "review") return loadGate();
+  $("extractNote").textContent = "Still reading… this is a real AI pass over your documents.";
+  setTimeout(pollExtract, 3000);
+}
+
+// --- review gate ---
+// "deal.listingBrokerName" → "listing broker name"; "financials.noi" → "NOI"
+const ACRO = { noi: "NOI", t12: "T12", sf: "SF", om: "OM", crm: "CRM", dd: "DD" };
+function nice(field){
+  const seg = field.split(".").pop().replace(/\[\]$/,"");
+  const words = seg.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase();
+  return words.split(" ").map(w => ACRO[w] ?? w).join(" ");
+}
+// full path for table labels: "property.yearBuilt" → "Property Year Built"
+function niceField(field){
+  return field.replace(/\[\]$/,"").split(".")
+    .map(seg => seg.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase().split(" ")
+      .map(w => ACRO[w] ?? w[0].toUpperCase()+w.slice(1)).join(" "))
+    .join(" ");
+}
+function fmtVal(v){ const s = typeof v==="object" ? JSON.stringify(v) : String(v); return s.length>60 ? s.slice(0,57)+"…" : s; }
+// value cell: photos get a thumbnail, brand colors get a swatch, the rest is text
+function valCell(c){
+  if (c.field === "media.photos[]" && c.value?.file) {
+    const cap = [c.value.caption, c.value.category].filter(Boolean).join(" · ");
+    return `<img src="/runs/${dealId}/${c.value.file}" style="height:46px;border-radius:4px;vertical-align:middle;margin-right:8px">${cap}`;
+  }
+  if (c.field === "brand.logo" && c.value?.file) {
+    // preview the three prepared variants side-by-side — as-uploaded, transparent (checkerboard), on-dark (navy)
+    const base = `/runs/${dealId}`;
+    const box = "height:46px;padding:3px;border-radius:4px;vertical-align:middle;margin-right:6px;";
+    return `<img src="${base}/${c.value.file}" style="${box}background:#fff;border:1px solid #eaedf2" title="as uploaded">`
+      + `<img src="${base}/${c.value.transparent}" style="${box}background:repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 50%/8px 8px;border:1px solid #eaedf2" title="background removed">`
+      + `<img src="${base}/${c.value.onDark}" style="${box}background:#344754;border:1px solid #344754" title="on Steel Navy">`;
+  }
+  if (/^brand\.(primary|accent)Color$/.test(c.field) && /^#?[0-9a-fA-F]{6}$/.test(String(c.value))) {
+    const hex = String(c.value).replace(/^#/,"");
+    return `<span style="display:inline-block;width:15px;height:15px;border-radius:3px;background:#${hex};vertical-align:-2px;margin-right:7px;border:1px solid #d5d8da"></span>#${hex}`;
+  }
+  return fmtVal(c.value);
+}
+function fmtSrc(s){ const b=[(s.doc||"").toUpperCase()]; if(s.page)b.push("p."+s.page); if(s.sheet)b.push(s.sheet); if(s.row)b.push("row "+s.row); if(s.range)b.push(s.range); return b.join(" · "); }
+
+async function loadGate() {
+  const manifest = await fetch("/api/manifest?deal="+dealId).then(r=>r.json());
+  candidates = manifest.candidates;
+  $("gateSub").textContent = `${candidates.length} facts extracted from your documents. Nothing reaches a marketing output until you approve it here. Rows marked "2 sources" show where your documents disagree.`;
+  const seen = new Set(); const dup = new Set();
+  candidates.forEach(c => { if (seen.has(c.field) && !c.field.endsWith("[]")) dup.add(c.field); seen.add(c.field); });
+  const tb = $("candTable").querySelector("tbody");
+  tb.innerHTML = "";
+  candidates.forEach(c => {
+    state[c.id] = c.status === "extracted" ? "extracted" : c.status;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="fieldp" title="${c.field}">${niceField(c.field)}${dup.has(c.field)?' <span class="chip conflict">2 sources</span>':''}</td>
+      <td class="val" title="${String(fmtVal(c.value)).replace(/"/g,"&quot;")}">${valCell(c)}${c.note?`<div class="note-line">ⓘ ${c.note}</div>`:""}${c.warning?`<div class="note-line">⚠ ${c.warning}</div>`:""}</td>
+      <td class="src">${fmtSrc(c.source)}</td>
+      <td class="conf ${c.confidence>=0.95?"hi":"mid"}">${Math.round(c.confidence*100)}%</td>
+      <td id="st-${c.id}"><span style="color:#8a8c8d">pending</span></td>
+      <td class="acts">
+        <button onclick="setSt('${c.id}','approved')">✓</button>
+        <button onclick="editVal('${c.id}', this)">✎</button>
+        <button onclick="setSt('${c.id}','rejected')">✕</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+  const allGaps = manifest.dataGaps ?? [];
+  const docGaps = allGaps.filter(g => g.field.startsWith("documents.") || g.field.startsWith("extracts."));
+  const factGaps = allGaps.filter(g => !docGaps.includes(g));
+  const gapBits = [];
+  if (factGaps.length) gapBits.push(
+    `<b>Not mentioned in this OM:</b> ${factGaps.map(g=>`<span title="${String(g.reason).replace(/"/g,"&quot;")}">${nice(g.field)}</span>`).join(", ")}.` +
+    ` These are simply left out of your outputs — never guessed. Hover any item for detail.`);
+  if (docGaps.length) gapBits.push(
+    `<span style="color:#8a8c8d">Optional: add a rent roll or T12 anytime to verify the OM's financials with operating data.</span>`);
+  $("gaps").style.display = gapBits.length ? "block" : "none";
+  $("gaps").innerHTML = gapBits.join("<br>");
+  refreshCounts();
+  go(2.5);
+}
+function setSt(id, st) { state[id] = st; $("st-"+id).innerHTML = `<span class="chip ${st}">${st}</span>`; refreshCounts(); }
+function editVal(id, btn) {
+  const c = candidates.find(x=>x.id===id);
+  const cell = btn.closest("tr").querySelector(".val");
+  const cur = typeof c.value==="object" ? JSON.stringify(c.value) : c.value;
+  cell.innerHTML = "";
+  const inp = document.createElement("input");
+  inp.value = cur; cell.appendChild(inp); inp.focus();
+  const commit = () => { c.editedValue = inp.value; cell.textContent = fmtVal(inp.value); setSt(id,"edited"); };
+  inp.onkeydown = (e)=>{ if(e.key==="Enter") commit(); };
+  inp.onblur = commit;
+}
+function refreshCounts() {
+  const vals = Object.values(state);
+  const p = vals.filter(v=>v==="extracted").length;
+  const a = vals.filter(v=>v==="approved").length, e = vals.filter(v=>v==="edited").length, r = vals.filter(v=>v==="rejected").length;
+  $("counts").innerHTML = `<b>${p}</b> pending · <b>${a}</b> approved · <b>${e}</b> edited · <b>${r}</b> rejected`;
+  $("toGen").disabled = p>0 || (a+e)===0;
+  $("gateHint").textContent = p>0 ? "Review every fact to continue — approve, edit, or reject." : "Ready. Only approved facts will be used.";
+}
+$("approveAll").onclick = () => candidates.forEach(c=>{ if(state[c.id]==="extracted") setSt(c.id,"approved"); });
+
+$("toGen").onclick = async () => {
+  showErr(null);
+  const decisions = candidates.map(c => ({ id: c.id, status: state[c.id], editedValue: c.editedValue }));
+  await fetch("/api/review?deal="+dealId, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ decisions }) });
+  await fetch(`/api/generate?deal=${dealId}&workflow=${$("workflow").value}`, { method: "POST" });
+  go(3);
+  pollGenerate();
+};
+
+async function pollGenerate() {
+  const s = await fetch("/api/status?deal="+dealId).then(r=>r.json());
+  if (s.phase === "error") { showErr("Generation didn't finish: " + s.error); go(2.5); return; }
+  if (s.phase === "done") return showDone(s);
+  $("genPhase").textContent = s.phase === "analyzing" ? "Assembling deal facts — reconciling sources…" : `Writing ${ (s.outputs??[]).length } outputs…`;
+  setTimeout(pollGenerate, 3000);
+}
+
+function showDone(s) {
+  $("doneTitle").textContent = ($("dealName").value || "Deal") + " — marketing package";
+  $("doneStats").innerHTML = `Generated from your approved facts · every number traceable to a source document · run cost <b>$${s.costUsd}</b>`;
+  const n = s.notes ?? {};
+  const bits = [];
+  if (n.missingFacts?.length) bits.push(`<b>Not in your documents:</b> ${n.missingFacts.map(nice).join(", ")} — these are omitted from every output, never estimated. Add a document or edit the facts and regenerate to include them.`);
+  if (n.analysis?.length) bits.push(`<b>Set aside during fact assembly:</b> ${n.analysis.slice(0,8).join(" · ")}${n.analysis.length>8?" · …":""}`);
+  if (n.skipped?.length) bits.push(`<b>Not produced this run:</b> ${n.skipped.map(x=>x.name).join(", ")} — hit Generate again to retry.`);
+  $("doneNotes").style.display = bits.length ? "block" : "none";
+  $("doneNotes").innerHTML = bits.join("<br><br>");
+  $("outGrid").innerHTML = Object.entries(s.assetLinks).map(([name, files]) => {
+    const [title, desc] = OUT_META[name] ?? [name, ""];
+    const links = files.map(f => {
+      const base = f.split("/").pop();
+      if (base === "linkedin-image.jpg") return `<a href="${f}" download="${base}">⬇ Image (1200×627)</a>`;
+      const label = base.endsWith(".docx") ? "⬇ Word" : base.endsWith(".pptx") ? "⬇ PowerPoint" : base.endsWith(".xlsx") ? "⬇ Excel" : base.endsWith(".html") ? "Open" : base.endsWith(".jpg")||base.endsWith(".png") ? "⬇ Image" : "View";
+      return `<a href="${f}" ${base.endsWith(".html")||base.endsWith(".txt")||base.endsWith(".json")?'target="_blank"':""} ${base.endsWith(".jpg")||base.endsWith(".png")?`download="${base}"`:""}>${label}</a>`;
+    }).join("");
+    return `<div class="out live"><div class="t">${title}</div>${desc}<div class="links">${links}</div></div>`;
+  }).join("");
+  const summary = (s.assetLinks["investment-summary"] ?? []).find(f=>f.endsWith(".html"));
+  $("previewWrap").innerHTML = summary ? `<h2 style="margin:8px 0 12px">Preview — Investment Summary</h2><iframe class="preview" src="${summary}"></iframe>` : "";
+  go(4);
+}
+
+// --- resume: #deal=<id> re-attaches to a saved deal (survives restarts) ---
+(async function resume() {
+  const m = location.hash.match(/^#deal=([\w-]+)$/);
+  if (!m) return;
+  dealId = m[1];
+  const nice = dealId.replace(/-\d{12,}$/, "").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  $("dealName").value = nice;
+  $("dealTag").textContent = "Deal · " + nice;
+  try {
+    const s = await fetch("/api/status?deal=" + dealId).then(r => r.json());
+    if (s.phase === "done") return showDone(s);
+    if (s.phase === "analyzing" || s.phase === "generating") { go(3); return pollGenerate(); }
+    if (s.phase === "extracting" || s.phase === "uploaded") { $("parserList").innerHTML = ""; go(2); return pollExtract(); }
+    if (s.phase === "review" || s.phase === "error") {
+      if (s.error) showErr(s.error);
+      try { return await loadGate(); } catch { go(1); return; }
+    }
+    // unknown deal — fresh start
+    location.hash = "";
+  } catch { go(1); }
+})();
+</script>
+</body>
+</html>

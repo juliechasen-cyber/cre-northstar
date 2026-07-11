@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "defaultWorkflowId": "full-package",
+  "comment": "Preset pattern adapted from ahacker-1/cre-acquisition-orchestrator config/workflows.json (Apache 2.0). requiredFacts is a reporting contract, not a gate: absent facts never block a run — they are omitted from every output (never estimated) and listed in the deal room notice.",
+  "workflows": [
+    {
+      "id": "full-package",
+      "name": "Full Marketing Package",
+      "summary": "All 9 outputs — the flagship run.",
+      "outputs": [
+        "investment-summary",
+        "executive-memo",
+        "linkedin-announcement",
+        "investor-email",
+        "pptx-om",
+        "property-website",
+        "press-release",
+        "dd-checklist",
+        "crm-entry"
+      ],
+      "requiredFacts": [
+        "property.name",
+        "property.address",
+        "property.propertyType",
+        "property.units",
+        "financials.noi",
+        "financials.occupancy",
+        "deal.broker"
+      ]
+    },
+    {
+      "id": "summary-only",
+      "name": "Investment Summary Only",
+      "summary": "v0.1 pipeline proof — full depth, one output.",
+      "outputs": ["investment-summary"],
+      "requiredFacts": [
+        "property.name",
+        "property.address",
+        "property.units",
+        "financials.noi",
+        "financials.occupancy",
+        "deal.broker"
+      ]
+    },
+    {
+      "id": "quick-announce",
+      "name": "Quick Announce",
+      "summary": "Get the listing in front of the network today: LinkedIn + email + 1-pager.",
+      "outputs": ["linkedin-announcement", "investor-email", "investment-summary"],
+      "requiredFacts": [
+        "property.name",
+        "property.address",
+        "property.units",
+        "deal.broker"
+      ]
+    },
+    {
+      "id": "web-presence",
+      "name": "Web Presence",
+      "summary": "The shareable link: property website + 1-pager to attach.",
+      "outputs": ["property-website", "investment-summary"],
+      "requiredFacts": [
+        "property.name",
+        "property.address",
+        "property.units",
+        "financials.noi",
+        "deal.broker",
+        "media.heroPhotoId"
+      ]
+    },
+    {
+      "id": "internal-prep",
+      "name": "Internal Prep",
+      "summary": "Before going to market: DD checklist + CRM record, nothing public.",
+      "outputs": ["dd-checklist", "crm-entry"],
+      "requiredFacts": [
+        "property.name",
+        "property.propertyType"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crenorthstar.local/schemas/rent-roll.schema.json",
+  "title": "Rent Roll Extract",
+  "description": "Full structured output of rent-roll-parser. Aggregates are mirrored into the extraction manifest as candidates; this file preserves unit-level detail for the deal-analyst. Adapted from ahacker-1/cre-acquisition-orchestrator (Apache 2.0).",
+  "type": "object",
+  "required": ["source", "summary", "unitMix", "units"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": ["file", "extractedAt"],
+      "properties": {
+        "file": { "type": "string" },
+        "extractedAt": { "type": "string", "format": "date-time" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "totalUnits": { "type": "integer" },
+        "occupiedUnits": { "type": "integer" },
+        "vacantUnits": { "type": "integer" },
+        "nonRevenueUnits": { "type": "integer" },
+        "occupancyRate": { "type": "number" },
+        "totalSf": { "type": "number" },
+        "avgUnitSf": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "income": {
+      "type": "object",
+      "properties": {
+        "grossPotentialRentAnnual": { "type": "number" },
+        "grossPotentialRentMonthly": { "type": "number" },
+        "inPlaceRentAnnual": { "type": "number" },
+        "inPlaceRentMonthly": { "type": "number" },
+        "lossToLeaseAnnual": { "type": "number" },
+        "lossToLeasePercent": { "type": "number" },
+        "avgMarketRent": { "type": "number" },
+        "avgInPlaceRent": { "type": "number" },
+        "avgRentPerSf": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "unitMix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "count"],
+        "properties": {
+          "type": { "type": "string" },
+          "count": { "type": "integer" },
+          "percentOfTotal": { "type": "number" },
+          "avgSf": { "type": "number" },
+          "marketRent": { "type": "number" },
+          "inPlaceRent": { "type": "number" },
+          "occupiedCount": { "type": "integer" },
+          "vacancyRate": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "leaseExpirations": {
+      "type": "object",
+      "properties": {
+        "next30Days": { "type": "integer" },
+        "next60Days": { "type": "integer" },
+        "next90Days": { "type": "integer" },
+        "monthToMonth": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["unitId"],
+        "properties": {
+          "unitId": { "type": "string" },
+          "type": { "type": "string" },
+          "sf": { "type": "number" },
+          "marketRent": { "type": "number" },
+          "actualRent": { "type": "number" },
+          "status": { "type": "string", "enum": ["occupied", "vacant", "notice", "non-revenue"] },
+          "leaseEnd": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "dataGaps": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

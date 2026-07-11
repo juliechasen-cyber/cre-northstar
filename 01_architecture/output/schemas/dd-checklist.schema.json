@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crenorthstar.local/schemas/dd-checklist.schema.json",
+  "title": "Due Diligence Checklist",
+  "description": "Internal output — never included in the marketing package export.",
+  "type": "object",
+  "required": ["dealId", "generatedAt", "items"],
+  "properties": {
+    "dealId": { "type": "string" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "task", "priority"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["financial", "physical", "legal", "environmental", "tenancy", "market"]
+          },
+          "task": { "type": "string" },
+          "why": { "type": "string", "description": "One sentence" },
+          "priority": { "type": "string", "enum": ["standard", "elevated"] },
+          "sourceRef": {
+            "type": "string",
+            "description": "Manifest candidate id or data-gap ref; present on all 'elevated' items born from risks[] or data gaps"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

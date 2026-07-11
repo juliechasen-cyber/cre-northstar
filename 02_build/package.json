@@ -1,0 +1,26 @@
+{
+  "name": "cre-northstar-pipeline",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pipeline": "node src/run.mjs",
+    "pipeline:auto": "node src/run.mjs --approve-all",
+    "dashboard": "node src/server.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "busboy": "^1.6.0",
+    "docx": "^9.7.1",
+    "jimp": "^0.22.12",
+    "pdfkit": "^0.19.1",
+    "pptxgenjs": "^4.0.1",
+    "xlsx": "^0.18.5"
+  }
+}
