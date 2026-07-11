@@ -1,0 +1,21 @@
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Generated demo outputs
+02_build/runs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

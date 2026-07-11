@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crenorthstar.local/schemas/extraction-manifest.schema.json",
+  "title": "Extraction Manifest",
+  "description": "All candidate fields extracted from the uploaded documents, with provenance. Nothing flows downstream until a candidate's status is 'approved' or 'edited'. Pattern adapted from ahacker-1/cre-acquisition-orchestrator (Apache 2.0).",
+  "type": "object",
+  "required": ["dealId", "createdAt", "documents", "candidates"],
+  "properties": {
+    "dealId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "reviewedAt": { "type": "string", "format": "date-time" },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["docId", "docType", "filename", "sha256"],
+        "properties": {
+          "docId": { "type": "string" },
+          "docType": { "type": "string", "enum": ["om", "rent-roll", "t12", "photos"] },
+          "filename": { "type": "string" },
+          "sha256": { "type": "string" },
+          "pages": { "type": "integer", "minimum": 1 },
+          "sheets": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "field", "value", "source", "confidence", "status"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "field": {
+            "type": "string",
+            "description": "Dot-path into deal-facts, e.g. 'financials.noi', 'property.units', 'highlights[]'"
+          },
+          "value": {},
+          "source": {
+            "type": "object",
+            "required": ["doc"],
+            "properties": {
+              "doc": { "type": "string", "enum": ["om", "rent-roll", "t12", "photos"] },
+              "page": { "type": "integer", "minimum": 1 },
+              "sheet": { "type": "string" },
+              "row": { "type": "integer" },
+              "col": { "type": "string" },
+              "range": { "type": "string", "description": "Cell range for aggregates, e.g. 'B2:B214'" },
+              "file": { "type": "string", "description": "Original filename (photos)" }
+            },
+            "additionalProperties": false
+          },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "status": {
+            "type": "string",
+            "enum": ["extracted", "approved", "edited", "rejected"],
+            "description": "Only 'approved' and 'edited' candidates reach the deal-analyst"
+          },
+          "editedValue": { "description": "Broker-supplied replacement; original 'value' is preserved" },
+          "note": { "type": "string", "description": "Parser explanation (inference, column choice, etc.)" },
+          "warning": { "type": "string", "description": "Validation concern surfaced at the review gate" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dataGaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "reason"],
+        "properties": {
+          "field": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "description": "Standard fields no parser could find — shown at the gate, consumed by dd-checklist"
+    }
+  },
+  "additionalProperties": false
+}

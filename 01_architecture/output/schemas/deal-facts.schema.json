@@ -1,0 +1,207 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crenorthstar.local/schemas/deal-facts.schema.json",
+  "title": "Deal Facts",
+  "description": "The single source of truth for all 9 generators. Assembled by deal-analyst from approved/edited manifest candidates only. Absent field = unknown; generators respond by omission, never estimation.",
+  "type": "object",
+  "required": ["dealId", "generatedAt", "property", "sourceRefs"],
+  "properties": {
+    "dealId": { "type": "string" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "property": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "state": { "type": "string" },
+            "zip": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "submarket": { "type": "string" },
+        "propertyType": { "type": "string", "enum": ["multifamily", "office", "retail", "industrial", "mixed-use", "hospitality", "land", "other"] },
+        "yearBuilt": { "type": "integer" },
+        "yearRenovated": { "type": "integer" },
+        "units": { "type": "integer", "minimum": 1 },
+        "buildingSf": { "type": "number" },
+        "lotAcres": { "type": "number" },
+        "parkingSpaces": { "type": "integer" },
+        "zoning": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "deal": {
+      "type": "object",
+      "properties": {
+        "askingPrice": { "type": "number", "description": "Absent = unpriced / call for offers" },
+        "pricePerUnit": { "type": "number" },
+        "pricePerSf": { "type": "number" },
+        "capRate": { "type": "number", "description": "Decimal, e.g. 0.0575" },
+        "offerProcess": { "type": "string" },
+        "offerDeadline": { "type": "string", "format": "date" },
+        "broker": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "firm": { "type": "string" },
+            "email": { "type": "string" },
+            "phone": { "type": "string" },
+            "license": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "financials": {
+      "type": "object",
+      "properties": {
+        "period": {
+          "type": "object",
+          "properties": {
+            "start": { "type": "string", "format": "date" },
+            "end": { "type": "string", "format": "date" }
+          },
+          "additionalProperties": false
+        },
+        "grossPotentialRent": { "type": "number" },
+        "effectiveGrossIncome": { "type": "number" },
+        "totalOperatingExpenses": { "type": "number" },
+        "noi": { "type": "number" },
+        "expenseRatio": { "type": "number" },
+        "occupancy": { "type": "number", "description": "Physical occupancy, decimal" },
+        "avgInPlaceRent": { "type": "number" },
+        "avgMarketRent": { "type": "number" },
+        "lossToLeasePercent": { "type": "number" },
+        "taxes": { "type": "number" },
+        "insurance": { "type": "number" },
+        "omStated": {
+          "type": "object",
+          "description": "OM figures that conflicted with operating documents; preserved for context, never used in outputs",
+          "properties": {
+            "noi": { "type": "number" },
+            "occupancy": { "type": "number" },
+            "capRate": { "type": "number" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "unitMix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "count"],
+        "properties": {
+          "type": { "type": "string" },
+          "count": { "type": "integer" },
+          "percentOfTotal": { "type": "number" },
+          "avgSf": { "type": "number" },
+          "avgInPlaceRent": { "type": "number" },
+          "avgMarketRent": { "type": "number" },
+          "occupiedCount": { "type": "integer" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "leaseExpirations": {
+      "type": "object",
+      "properties": {
+        "next30Days": { "type": "integer" },
+        "next60Days": { "type": "integer" },
+        "next90Days": { "type": "integer" },
+        "monthToMonth": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "highlights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "sourceRef"],
+        "properties": {
+          "claim": { "type": "string" },
+          "sourceRef": { "type": "string", "description": "Manifest candidate id" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "INTERNAL. Readable only by the dd-checklist generator.",
+      "items": {
+        "type": "object",
+        "required": ["issue", "sourceRef"],
+        "properties": {
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["standard", "elevated"] },
+          "sourceRef": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "market": {
+      "type": "object",
+      "properties": {
+        "narrative": { "type": "string" },
+        "comps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["sale", "rent"] },
+              "value": { "type": "number" },
+              "unit": { "type": "string", "description": "e.g. 'per unit', 'per SF/mo'" },
+              "date": { "type": "string" },
+              "sourceRef": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "media": {
+      "type": "object",
+      "properties": {
+        "heroPhotoId": { "type": "string" },
+        "photos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "file", "category"],
+            "properties": {
+              "id": { "type": "string" },
+              "file": { "type": "string" },
+              "category": { "type": "string", "enum": ["exterior", "interior-unit", "amenity", "aerial", "signage", "neighborhood", "floorplan", "other"] },
+              "caption": { "type": "string" },
+              "qualityFlags": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceRefs": {
+      "type": "object",
+      "description": "Map of deal-facts field path → manifest candidate id(s). Derived metrics list all contributing candidates plus the formula.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "candidates": { "type": "array", "items": { "type": "string" } },
+          "formula": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

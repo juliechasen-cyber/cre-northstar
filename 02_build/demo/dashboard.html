@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRE Northstar — Deal Dashboard</title>
+<style>
+  :root {
+    --navy:#344754; --charcoal:#424143; --lime:#8cc040; --teal:#87c1bf;
+    --gray:#bcbec0; --mist:#eaedf2; --off:#f8f9fa;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: Calibri, "Segoe UI", sans-serif; color: var(--charcoal); background: var(--off); display: flex; min-height: 100vh; }
+  h1,h2,h3 { font-family: Georgia, serif; color: var(--navy); }
+
+  /* ---- left rail ---- */
+  aside { width: 230px; background: var(--navy); color: #fff; padding: 28px 20px; flex-shrink: 0; display:flex; flex-direction:column; }
+  .wordmark { font-family: Georgia, serif; font-size: 19px; letter-spacing: .04em; }
+  .wordmark b { color: var(--lime); }
+  .deal-tag { font-size: 12px; color: var(--teal); margin-top: 6px; }
+  nav { margin-top: 36px; }
+  .step { display:flex; align-items:center; gap:10px; padding:10px 8px; border-radius:6px; font-size:14px; color:#ffffffb0; }
+  .step .n { width:22px; height:22px; border-radius:50%; border:1.5px solid #ffffff60; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+  .step.active { background:#ffffff14; color:#fff; }
+  .step.active .n { background: var(--lime); border-color: var(--lime); color: var(--navy); font-weight:700; }
+  .step.done { color:#fff; }
+  .step.done .n { background: var(--teal); border-color: var(--teal); color: var(--navy); }
+  .demo-badge { margin-top:auto; font-size:11px; color:#ffffff80; border:1px solid #ffffff30; border-radius:6px; padding:8px 10px; line-height:1.5; }
+
+  /* ---- main ---- */
+  main { flex:1; padding: 36px 44px; max-width: 1060px; }
+  .screen { display:none; }
+  .screen.on { display:block; }
+  .kicker { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--lime); }
+  h1 { font-size: 26px; margin: 4px 0 6px; }
+  .sub { color:#6b6d6e; margin-bottom: 26px; max-width: 640px; }
+
+  .btn { font-family: Calibri, sans-serif; font-size:15px; font-weight:700; border:none; border-radius:6px; padding:11px 22px; cursor:pointer; }
+  .btn-primary { background: var(--lime); color: var(--navy); }
+  .btn-primary:disabled { background: var(--gray); color:#fff; cursor:not-allowed; }
+  .btn-ghost { background:none; border:1.5px solid var(--gray); color:var(--charcoal); }
+
+  /* upload */
+  .cards { display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  .card { background:#fff; border:1.5px dashed var(--gray); border-radius:10px; padding:20px 16px; text-align:center; min-height:150px; display:flex; flex-direction:column; justify-content:center; gap:6px; }
+  .card .ico { font-size:26px; }
+  .card .t { font-weight:700; color:var(--navy); font-size:14px; }
+  .card .d { font-size:12px; color:#8a8c8d; }
+  .card.filled { border:1.5px solid var(--teal); background:#fff; }
+  .card.filled .d { color:var(--navy); font-weight:700; }
+  .card .chk { color:var(--lime); font-weight:700; font-size:12px; visibility:hidden; }
+  .card.filled .chk { visibility:visible; }
+
+  /* extraction */
+  .parsers { display:flex; flex-direction:column; gap:16px; max-width:560px; }
+  .parser { background:#fff; border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px #00000014; }
+  .parser .row1 { display:flex; justify-content:space-between; font-size:14px; font-weight:700; color:var(--navy); }
+  .parser .stat { font-size:12px; color:#8a8c8d; font-weight:400; }
+  .bar { height:6px; background:var(--mist); border-radius:3px; margin-top:10px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0%; background:var(--lime); transition: width .3s; }
+
+  /* review table */
+  .gate-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .counts { font-size:13px; color:#6b6d6e; }
+  .counts b { color:var(--navy); }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 1px 3px #00000014; font-size:13px; }
+  th { background:var(--navy); color:#fff; text-align:left; padding:9px 12px; font-size:12px; letter-spacing:.03em; position:sticky; top:0; }
+  td { padding:8px 12px; border-bottom:1px solid var(--mist); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .field { font-family:ui-monospace, Menlo, monospace; font-size:12px; color:var(--navy); }
+  .val { max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .src { font-size:12px; color:#8a8c8d; white-space:nowrap; }
+  .conf { font-size:12px; }
+  .conf.hi { color:#5a8f28; } .conf.mid { color:#b07d1e; }
+  .chip { display:inline-block; font-size:10.5px; font-weight:700; border-radius:4px; padding:2px 7px; letter-spacing:.03em; }
+  .chip.conflict { background:#fdf1dc; color:#9a6b12; }
+  .chip.approved { background:#eaf4dd; color:#5a8f28; }
+  .chip.edited { background:#e3f0ef; color:#3e7d7a; }
+  .chip.rejected { background:#f6e3e3; color:#a04545; }
+  .acts { white-space:nowrap; }
+  .acts button { border:none; background:var(--mist); border-radius:5px; padding:4px 9px; margin-right:4px; cursor:pointer; font-size:12px; color:var(--charcoal); }
+  .acts button:hover { background:var(--teal); color:#fff; }
+  .note-line { font-size:11.5px; color:#9a6b12; margin-top:3px; }
+  .gaps { background:#fff; border-left:4px solid var(--teal); border-radius:8px; padding:14px 18px; margin:18px 0; font-size:13px; }
+  .gate-foot { display:flex; gap:12px; align-items:center; margin-top:20px; }
+  td input { font:inherit; width:100%; border:1.5px solid var(--teal); border-radius:4px; padding:3px 6px; }
+
+  /* generating */
+  .gen-list { max-width:560px; background:#fff; border-radius:10px; padding:20px 24px; box-shadow:0 1px 3px #00000014; }
+  .gen-item { display:flex; gap:10px; padding:8px 0; font-size:14px; align-items:center; }
+  .gen-item .dot { width:10px; height:10px; border-radius:50%; background:var(--gray); flex-shrink:0; }
+  .gen-item.doing .dot { background:var(--lime); animation:pulse 1s infinite; }
+  .gen-item.done .dot { background:var(--teal); }
+  @keyframes pulse { 50% { opacity:.4; } }
+
+  /* deliver */
+  .out-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px; }
+  .out { background:#fff; border-radius:10px; padding:16px; box-shadow:0 1px 3px #00000014; font-size:13px; }
+  .out .t { font-weight:700; color:var(--navy); font-size:14px; margin-bottom:4px; }
+  .out.locked { opacity:.5; }
+  .out .soon { font-size:11px; color:#8a8c8d; }
+  .out.live { border-top:3px solid var(--lime); }
+  .out .links { margin-top:10px; display:flex; gap:8px; }
+  .out .links a, .out .links button { font-size:12px; font-weight:700; color:var(--navy); background:var(--mist); border:none; border-radius:5px; padding:6px 10px; text-decoration:none; cursor:pointer; }
+  .run-stats { font-size:12.5px; color:#6b6d6e; margin-bottom:22px; }
+  .run-stats b { color:var(--navy); }
+
+  /* editable paper */
+  .paper-wrap { display:flex; gap:20px; align-items:flex-start; }
+  .paper { background:#fff; box-shadow:0 2px 10px #00000022; padding:38px 44px; max-width:680px; flex:1; font-size:10.5pt; }
+  .paper h2 { font-size:21pt; margin:0; }
+  .paper .addr { font-size:11pt; }
+  .paper .subline { color:var(--navy); font-weight:700; font-size:8.5pt; letter-spacing:.06em; text-transform:uppercase; margin-bottom:13px; }
+  .tiles { display:flex; gap:8px; margin-bottom:6px; }
+  .tile { flex:1; background:var(--mist); border-top:3px solid var(--lime); padding:7px 9px; }
+  .tile .tl { font-size:7pt; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .tile .tv { font-family:Georgia, serif; color:var(--navy); font-size:12pt; font-weight:700; }
+  .paper h3 { font-size:10.5pt; text-transform:uppercase; letter-spacing:.04em; border-bottom:2px solid var(--lime); padding-bottom:3px; margin:15px 0 7px; }
+  .paper table { box-shadow:none; border-radius:0; font-size:9.5pt; }
+  .paper th { position:static; font-size:9pt; padding:5px 8px; }
+  .paper td { padding:4px 8px; }
+  .paper .num { text-align:right; }
+  .paper ul { margin:4px 0 0 18px; padding:0; } .paper li { margin-bottom:3px; }
+  .paper footer { border-top:2px solid var(--navy); margin-top:18px; padding-top:8px; }
+  .paper .broker { font-weight:700; } .paper .deadline { color:var(--navy); font-weight:700; margin-top:4px; }
+  [contenteditable]:hover { outline:1.5px dashed var(--teal); outline-offset:2px; }
+  [contenteditable]:focus { outline:2px solid var(--lime); outline-offset:2px; }
+  .edit-note { width:220px; font-size:12.5px; color:#6b6d6e; background:#fff; border-radius:10px; padding:16px; box-shadow:0 1px 3px #00000014; position:sticky; top:20px; }
+  .edit-note b { color:var(--navy); }
+  #toast { position:fixed; bottom:24px; right:24px; background:var(--navy); color:#fff; padding:10px 18px; border-radius:8px; font-size:13px; opacity:0; transition:opacity .3s; pointer-events:none; }
+  #toast.show { opacity:1; }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="wordmark">CRE <b>NORTHSTAR</b></div>
+  <div class="deal-tag" id="dealTag">New deal</div>
+  <nav>
+    <div class="step" id="nav1"><span class="n">1</span> Upload documents</div>
+    <div class="step" id="nav2"><span class="n">2</span> Review extraction</div>
+    <div class="step" id="nav3"><span class="n">3</span> Generate</div>
+    <div class="step" id="nav4"><span class="n">4</span> Marketing package</div>
+  </nav>
+  <div class="demo-badge">PRODUCT PREVIEW — the extraction, numbers and documents behind this screen are real output from the v0.1 pipeline. The dashboard chrome is a mock.</div>
+</aside>
+
+<main>
+
+  <!-- 1 · UPLOAD -->
+  <section class="screen" id="s1">
+    <div class="kicker">Step 1 of 4</div>
+    <h1>Start a new deal</h1>
+    <p class="sub">Drop the raw deal documents. CRE Northstar reads them, extracts every marketable fact with its source, and builds the full marketing package — nothing is published until you approve the numbers.</p>
+    <div class="cards">
+      <div class="card" id="c-om"><div class="ico">📕</div><div class="t">Offering Memo</div><div class="d">PDF</div><div class="chk">✓ offering-memo.pdf</div></div>
+      <div class="card" id="c-rr"><div class="ico">📊</div><div class="t">Rent Roll</div><div class="d">XLSX · CSV · PDF</div><div class="chk">✓ rent-roll.xlsx</div></div>
+      <div class="card" id="c-t12"><div class="ico">📈</div><div class="t">T12 Operating Stmt</div><div class="d">XLSX · CSV · PDF</div><div class="chk">✓ t12.xlsx</div></div>
+      <div class="card" id="c-ph"><div class="ico">📷</div><div class="t">Photos</div><div class="d">optional — JPG/PNG</div><div class="chk">— skipped</div></div>
+    </div>
+    <button class="btn btn-ghost" id="loadDemo">Drop in the Hillcrest Gardens files</button>
+    <button class="btn btn-primary" id="processBtn" disabled>Process deal →</button>
+  </section>
+
+  <!-- 2a · EXTRACTING -->
+  <section class="screen" id="s2a">
+    <div class="kicker">Step 2 of 4</div>
+    <h1>Reading your documents…</h1>
+    <p class="sub">Three parsers run in parallel. Every value they find carries its source — document, page, sheet, row — and a confidence score.</p>
+    <div class="parsers">
+      <div class="parser"><div class="row1"><span>Offering Memo parser</span><span class="stat" id="p1s">reading pages…</span></div><div class="bar"><i id="p1"></i></div></div>
+      <div class="parser"><div class="row1"><span>Rent Roll parser</span><span class="stat" id="p2s">mapping columns…</span></div><div class="bar"><i id="p2"></i></div></div>
+      <div class="parser"><div class="row1"><span>T12 parser</span><span class="stat" id="p3s">normalizing line items…</span></div><div class="bar"><i id="p3"></i></div></div>
+    </div>
+  </section>
+
+  <!-- 2 · REVIEW GATE -->
+  <section class="screen" id="s2">
+    <div class="kicker">Step 2 of 4 · Review gate</div>
+    <h1>Approve the numbers before anything is written</h1>
+    <p class="sub">54 facts extracted from your three documents. Nothing reaches a marketing output until you approve it here. Rows flagged <span class="chip conflict">2 sources</span> show where your documents disagree — the operating statements win unless you say otherwise.</p>
+    <div class="gate-head">
+      <div class="counts" id="counts"></div>
+      <div>
+        <button class="btn btn-ghost" id="approveAll">Approve all remaining</button>
+      </div>
+    </div>
+    <div style="max-height:430px; overflow:auto; border-radius:10px;">
+    <table id="candTable">
+      <thead><tr><th>Field</th><th>Extracted value</th><th>Source</th><th>Conf.</th><th>Status</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="gaps" id="gaps"></div>
+    <div class="gate-foot">
+      <button class="btn btn-primary" id="toGen" disabled>Generate marketing package →</button>
+      <span class="counts" id="gateHint"></span>
+    </div>
+  </section>
+
+  <!-- 3 · GENERATING -->
+  <section class="screen" id="s3">
+    <div class="kicker">Step 3 of 4</div>
+    <h1>Building your package…</h1>
+    <p class="sub">Generators only use the numbers you approved. A value you rejected simply doesn't appear — it is never estimated.</p>
+    <div class="gen-list">
+      <div class="gen-item" id="g1"><span class="dot"></span> Assembling deal facts — reconciling OM vs. operating statements</div>
+      <div class="gen-item" id="g2"><span class="dot"></span> Writing Investment Summary</div>
+      <div class="gen-item" id="g3"><span class="dot"></span> Rendering editable .docx + web preview</div>
+    </div>
+  </section>
+
+  <!-- 4 · DELIVER -->
+  <section class="screen" id="s4">
+    <div class="kicker">Step 4 of 4 · Deal room</div>
+    <h1>Hillcrest Gardens Apartments — marketing package</h1>
+    <p class="run-stats">Full package: <b>9 outputs</b> from <b>54 approved facts</b> · every number traceable to a source document · all-in run cost <b>$1.39</b> · under <b>4 minutes</b></p>
+    <div class="out-grid">
+      <div class="out live"><div class="t">Investment Summary</div>One-page teaser for first outreach.<div class="links"><a href="../runs/hillcrest-gardens/investment-summary.docx" download>⬇ Word</a><button onclick="document.getElementById('paper').scrollIntoView({behavior:'smooth'})">Edit below</button></div></div>
+      <div class="out live"><div class="t">PowerPoint OM</div>Full 8-slide offering deck.<div class="links"><a href="../runs/hillcrest-gardens/offering-memorandum.pptx" download>⬇ PowerPoint</a></div></div>
+      <div class="out live"><div class="t">Investor Email</div>3 subject lines + body for the blast.<div class="links"><a href="../runs/hillcrest-gardens/investor-email.txt" target="_blank">View text</a><a href="../runs/hillcrest-gardens/investor-email.html" target="_blank">HTML</a></div></div>
+      <div class="out live"><div class="t">LinkedIn Announcement</div>Post copy, under the "see more" fold.<div class="links"><a href="../runs/hillcrest-gardens/linkedin-announcement.txt" target="_blank">View post</a></div></div>
+      <div class="out live"><div class="t">Property Website</div>The shareable listing link.<div class="links"><a href="../runs/hillcrest-gardens/property-website.html" target="_blank">Open site</a></div></div>
+      <div class="out live"><div class="t">Executive Memo</div>The "tell me more" document.<div class="links"><a href="../runs/hillcrest-gardens/executive-memo.docx" download>⬇ Word</a></div></div>
+      <div class="out live"><div class="t">Press Release</div>Wire format, draft quote flagged.<div class="links"><a href="../runs/hillcrest-gardens/press-release.docx" download>⬇ Word</a></div></div>
+      <div class="out live"><div class="t">Due Diligence Checklist</div>Internal only — never exported with marketing.<div class="links"><a href="../runs/hillcrest-gardens/dd-checklist.xlsx" download>⬇ Excel</a></div></div>
+      <div class="out live"><div class="t">CRM Entry</div>Structured record, asset links included.<div class="links"><a href="../runs/hillcrest-gardens/crm-entry.json" target="_blank">View JSON</a></div></div>
+    </div>
+
+    <div class="paper-wrap">
+      <div class="paper" id="paper">
+        <h2 contenteditable spellcheck="false">Hillcrest Gardens Apartments</h2>
+        <div class="addr" contenteditable>4820 Juniper Street, San Diego, CA 92104</div>
+        <div class="subline" contenteditable>Multifamily · 48 units · built 1987 · renovated 2019</div>
+        <div class="tiles">
+          <div class="tile"><div class="tl">Asking Price</div><div class="tv" contenteditable>$10,950,000</div></div>
+          <div class="tile"><div class="tl">Price / Unit</div><div class="tv" contenteditable>$228,125</div></div>
+          <div class="tile"><div class="tl">Cap Rate</div><div class="tv" contenteditable>6.33%</div></div>
+          <div class="tile"><div class="tl">Occupancy</div><div class="tv" contenteditable>93.6%</div></div>
+          <div class="tile"><div class="tl">NOI</div><div class="tv" contenteditable>$692,800</div></div>
+        </div>
+        <h3>The Opportunity</h3>
+        <p contenteditable>Hillcrest Gardens Apartments is a 48-unit multifamily asset in San Diego's North Park / Hillcrest submarket, three blocks from the 30th Street restaurant corridor with a Walk Score of 91. In-place rents sit approximately 7% below market, and 28 classic units remain for a value-add program alongside 20 units renovated in 2019.</p>
+        <h3>Financial Snapshot</h3>
+        <p style="font-style:italic; font-size:8.5pt; margin-bottom:4px;">Trailing 12 months, July 1, 2025 – June 30, 2026</p>
+        <table><tbody>
+          <tr><td>Gross Potential Rent</td><td class="num">$1,185,000</td></tr>
+          <tr><td>Effective Gross Income</td><td class="num">$1,164,400</td></tr>
+          <tr><td>Total Operating Expenses</td><td class="num">$471,600</td></tr>
+          <tr><td><b>Net Operating Income</b></td><td class="num"><b>$692,800</b></td></tr>
+          <tr><td>Expense Ratio</td><td class="num">40.5%</td></tr>
+        </tbody></table>
+        <h3>Unit Mix</h3>
+        <table><thead><tr><th>Type</th><th class="num">Units</th><th class="num">Avg SF</th><th class="num">In-Place Rent</th><th class="num">Market Rent</th></tr></thead><tbody>
+          <tr><td>1BR/1BA</td><td class="num">24</td><td class="num">720</td><td class="num">$1,764</td><td class="num">$1,895</td></tr>
+          <tr><td>2BR/1BA</td><td class="num">8</td><td class="num">900</td><td class="num">$1,987</td><td class="num">$2,150</td></tr>
+          <tr><td>2BR/2BA</td><td class="num">16</td><td class="num">1,050</td><td class="num">$2,212</td><td class="num">$2,395</td></tr>
+        </tbody></table>
+        <h3>Highlights</h3>
+        <ul contenteditable>
+          <li>In-place rents approximately 7% below market, embedded loss-to-lease upside.</li>
+          <li>28 classic units remain for a value-add program.</li>
+          <li>20 units renovated in 2019 with quartz and stainless finishes.</li>
+          <li>Walkable North Park / Hillcrest location, Walk Score of 91.</li>
+          <li>North Park multifamily occupancy averaged above 95% over five years.</li>
+        </ul>
+        <footer>
+          <div class="broker" contenteditable>Dana Whitfield · Meridian Capital Advisors</div>
+          <div contenteditable>(619) 555-0142 · dwhitfield@meridiancap.example.com · CA DRE #01234567</div>
+          <div class="deadline" contenteditable>Offers due August 12, 2026</div>
+        </footer>
+      </div>
+      <div class="edit-note">
+        <b>Edit anything.</b> Click any text on the page and type — this is the dashboard editor.<br><br>
+        Content is yours; <b>the design is locked to your brand</b>, so nothing you type can go off-template.<br><br>
+        Downloads re-render from your edits: native Word, PowerPoint and Excel files you can keep editing offline.
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toast">Saved — downloads will re-render with your edit</div>
+
+<script>
+const CANDIDATES = [{"id":"om-001","field":"property.name","value":"Hillcrest Gardens Apartments","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-002","field":"property.address","value":"4820 Juniper Street","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-003","field":"property.city","value":"San Diego","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-004","field":"property.state","value":"CA","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-005","field":"property.zip","value":"92104","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-006","field":"property.submarket","value":"North Park / Hillcrest","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-007","field":"property.propertyType","value":"Multifamily (garden-style)","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-008","field":"property.yearBuilt","value":1987,"source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-009","field":"property.yearRenovated","value":2019,"source":{"doc":"om","page":2},"confidence":1,"status":"approved","note":"OM says selectively renovated in 2019; 20 units fully renovated"},{"id":"om-010","field":"property.units","value":48,"source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-011","field":"property.buildingSF","value":41280,"source":{"doc":"om","page":2},"confidence":1,"status":"approved","note":"Stated as rentable square feet"},{"id":"om-012","field":"property.lotAcres","value":1.38,"source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-013","field":"property.parking","value":"62 surface parking spaces (gated)","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-014","field":"property.zoning","value":"RM-2-5","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-015","field":"property.buildingCount","value":3,"source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-016","field":"property.unitMix","value":"24 1BR/1BA (~720 SF), 8 2BR/1BA (~900 SF), 16 2BR/2BA (~1,050 SF)","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-017","field":"deal.askingPrice","value":10950000,"source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-018","field":"deal.offerDeadline","value":"2026-08-12","source":{"doc":"om","page":3},"confidence":1,"status":"approved","note":"Stated as Wednesday, August 12, 2026"},{"id":"om-019","field":"deal.offerProcess","value":"Offers due to exclusive listing broker; due diligence data room available upon execution of a confidentiality agreement","source":{"doc":"om","page":3},"confidence":1,"status":"approved"},{"id":"om-020","field":"deal.broker.name","value":"Dana Whitfield","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-021","field":"deal.broker.firm","value":"Meridian Capital Advisors","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-022","field":"deal.broker.email","value":"dwhitfield@meridiancap.example.com","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-023","field":"deal.broker.phone","value":"(619) 555-0142","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-024","field":"deal.broker.license","value":"CA DRE #01234567","source":{"doc":"om","page":1},"confidence":1,"status":"approved"},{"id":"om-025","field":"financials.capRate","value":0.063,"source":{"doc":"om","page":2},"confidence":1,"status":"approved","note":"source: OM — stated 6.3% cap rate on asking price; reconcile against T12"},{"id":"om-026","field":"financials.noi","value":695000,"source":{"doc":"om","page":3},"confidence":0.9,"status":"approved","note":"source: OM — stated as approximately $695,000 T12 NOI; reconcile against T12"},{"id":"om-027","field":"financials.occupancy","value":0.94,"source":{"doc":"om","page":2},"confidence":1,"status":"approved","note":"source: OM — stated current occupancy; reconcile against rent roll"},{"id":"om-028","field":"financials.egi","value":1164000,"source":{"doc":"om","page":3},"confidence":0.9,"status":"approved","note":"source: OM — stated approximate T12 effective gross income"},{"id":"om-029","field":"financials.operatingExpenses","value":472000,"source":{"doc":"om","page":3},"confidence":0.9,"status":"approved","note":"source: OM — stated approximate T12 operating expenses"},{"id":"om-030","field":"highlights[]","value":"In-place rents approximately 7% below market — embedded loss-to-lease upside through natural turnover","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-031","field":"highlights[]","value":"20 units fully renovated in 2019 with quartz countertops, vinyl plank flooring, and stainless appliances — 28 classic units remain for a value-add program","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-032","field":"highlights[]","value":"Walkable North Park / Hillcrest location: Walk Score 91, three blocks to the 30th Street restaurant corridor","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-033","field":"highlights[]","value":"Strong submarket fundamentals: North Park multifamily occupancy has averaged above 95% for the past five years","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-034","field":"highlights[]","value":"Stable operations: trailing-twelve NOI of approximately $695,000 at a 6.3% capitalization rate on the asking price","source":{"doc":"om","page":2},"confidence":1,"status":"approved"},{"id":"om-035","field":"market.narrative","value":"North Park and Hillcrest are among San Diego's most sought-after urban neighborhoods, anchored by the 30th Street corridor's restaurant and craft-brewery scene. Draws young professionals from nearby medical employment cluster (UC San Diego Health Hillcrest and Scripps Mercy, over 8,000 employees within two miles).","source":{"doc":"om","page":3},"confidence":1,"status":"approved"},{"id":"om-036","field":"market.demographics","value":"Medical employment cluster of over 8,000 employees within two miles (UC San Diego Health Hillcrest and Scripps Mercy)","source":{"doc":"om","page":3},"confidence":1,"status":"approved"},{"id":"om-037","field":"market.comps[]","value":"The Cordova — 36 units, sold February 2026 at $242,000 per unit","source":{"doc":"om","page":3},"confidence":1,"status":"approved"},{"id":"om-038","field":"market.comps[]","value":"Palm & Oak Apartments — 52 units, sold November 2025 at $221,500 per unit","source":{"doc":"om","page":3},"confidence":1,"status":"approved"},{"id":"om-039","field":"financials.otherIncome","value":"Utility reimbursements (RUBS) and on-site laundry","source":{"doc":"om","page":3},"confidence":1,"status":"approved"},{"id":"rr-001","field":"property.units","value":48,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"A3:A49"},"confidence":0.98,"status":"approved"},{"id":"rr-002","field":"property.totalSf","value":41280,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"C3:C49"},"confidence":0.98,"status":"approved"},{"id":"rr-003","field":"property.occupiedUnits","value":44,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"F3:F49"},"confidence":0.97,"status":"approved","note":"Unit 206 (Model) treated as non-revenue and excluded; 3 vacant (104, 118, 217)."},{"id":"rr-004","field":"property.occupancyRate","value":0.9362,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"F3:F49"},"confidence":0.95,"status":"approved","note":"Occupied 44 of 47 revenue units; non-revenue Model unit excluded from denominator."},{"id":"rr-005","field":"property.unitMix","value":[{"type":"1BR/1BA","count":24,"avgSf":720,"marketRent":1895,"inPlaceRent":1764.09,"occupiedCount":22},{"type":"2BR/1BA","count":8,"avgSf":900,"marketRent":2150,"inPlaceRent":1987.14,"occupiedCount":7},{"type":"2BR/2BA","count":16,"avgSf":1050,"marketRent":2395,"inPlaceRent":2212.33,"occupiedCount":15}],"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"A3:G49"},"confidence":0.96,"status":"approved"},{"id":"rr-006","field":"financials.grossPotentialRentAnnual","value":1186200,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"D3:D49"},"confidence":0.95,"status":"approved","note":"Market rent across 47 revenue units × 12; non-revenue Model unit excluded."},{"id":"rr-007","field":"financials.inPlaceRentAnnual","value":1030860,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"E3:E49"},"confidence":0.96,"status":"approved","note":"Sum of current rents (85,905/mo) × 12."},{"id":"rr-008","field":"financials.lossToLeaseAnnual","value":81120,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"D3:E49"},"confidence":0.92,"status":"approved","note":"Market minus in-place on occupied units only (6,760/mo × 12); excludes vacancy loss."},{"id":"rr-009","field":"financials.lossToLeasePercent","value":7.29,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"D3:E49"},"confidence":0.92,"status":"approved","note":"Occupied loss to lease relative to occupied market rent."},{"id":"rr-010","field":"financials.avgRentPerSf","value":2.27,"source":{"doc":"rent-roll","sheet":"Rent Roll","range":"C3:E49"},"confidence":0.9,"status":"approved","note":"In-place monthly rent per occupied SF."},{"id":"t12-001","field":"financials.effectiveGrossIncome","value":1164400,"source":{"doc":"t12","sheet":"T12","row":10,"range":"Jul-25:Jun-26"},"confidence":0.98,"status":"approved"},{"id":"t12-002","field":"financials.totalOperatingExpenses","value":471600,"source":{"doc":"t12","sheet":"T12","row":21,"range":"Jul-25:Jun-26"},"confidence":0.98,"status":"approved"},{"id":"t12-003","field":"financials.noi","value":692800,"source":{"doc":"t12","sheet":"T12","row":10,"range":"rows 10,21"},"confidence":0.98,"status":"approved","note":"Computed NOI (EGI 1,164,400 − OpEx 471,600) equals stated NOI on row 22; no discrepancy."},{"id":"t12-004","field":"financials.expenseRatio","value":0.405,"source":{"doc":"t12","sheet":"T12","row":21},"confidence":0.97,"status":"approved","note":"Total OpEx 471,600 / EGI 1,164,400 = 0.4050."},{"id":"t12-005","field":"financials.grossPotentialRent","value":1185000,"source":{"doc":"t12","sheet":"T12","row":4,"range":"Jul-25:Jun-26"},"confidence":0.98,"status":"approved"}];
+const DATA_GAPS = [{"field":"risks","reason":"OM discloses no deferred maintenance, litigation, ground lease, flood zone, or other buyer's-counsel concerns"},{"field":"property.units.renovatedCount","reason":"Only 20 renovated / 28 classic split stated in highlight narrative; captured within highlights rather than as discrete field"}];
+
+const $ = (id) => document.getElementById(id);
+let stage = 1;
+function go(n) {
+  stage = n;
+  ["s1","s2a","s2","s3","s4"].forEach(s => $(s).classList.remove("on"));
+  $({1:"s1",2:"s2a",2.5:"s2",3:"s3",4:"s4"}[n]).classList.add("on");
+  for (let i=1;i<=4;i++) {
+    const nav = $("nav"+i);
+    nav.classList.toggle("active", Math.floor(n)===i || (n===2.5&&i===2));
+    nav.classList.toggle("done", i < Math.floor(n) || (n===2.5&&i<2));
+  }
+  if (n>=2) $("dealTag").textContent = "Deal · Hillcrest Gardens";
+}
+go(1);
+
+// --- step 1: upload ---
+$("loadDemo").onclick = () => {
+  ["c-om","c-rr","c-t12","c-ph"].forEach((id,i)=>setTimeout(()=>$(id).classList.add("filled"), i*250));
+  setTimeout(()=>{ $("processBtn").disabled = false; }, 1100);
+};
+$("processBtn").onclick = () => { go(2); runParsers(); };
+
+// --- step 2a: parser animation (timings real-ish; stats from the real run) ---
+function runParsers() {
+  const plan = [
+    ["p1","p1s",2600,"38 fields · 3,168 tokens"],
+    ["p2","p2s",3400,"10 aggregates + 48 units · 9,496 tokens"],
+    ["p3","p3s",2200,"5 headline figures · 3,857 tokens"],
+  ];
+  let doneCount = 0;
+  plan.forEach(([bar,stat,ms,final]) => {
+    let w = 0;
+    const t = setInterval(()=>{ w = Math.min(w + 4 + Math.random()*8, 100); $(bar).style.width = w+"%";
+      if (w>=100) { clearInterval(t); $(stat).textContent = "✓ " + final; if (++doneCount===3) setTimeout(()=>{ go(2.5); renderGate(); }, 700); }
+    }, ms/22);
+  });
+}
+
+// --- step 2: review gate (real candidates) ---
+const state = {};
+function fmtVal(v){ const s = typeof v==="object" ? JSON.stringify(v) : String(v); return s.length>60 ? s.slice(0,57)+"…" : s; }
+function fmtSrc(s){ const b=[s.doc.toUpperCase()]; if(s.page)b.push("p."+s.page); if(s.sheet)b.push(s.sheet); if(s.row)b.push("row "+s.row); if(s.range)b.push(s.range); return b.join(" · "); }
+function renderGate() {
+  const dupFields = new Set();
+  const seen = new Set();
+  CANDIDATES.forEach(c => { if (seen.has(c.field) && c.field !== "highlights[]" && c.field !== "market.comps[]") dupFields.add(c.field); seen.add(c.field); });
+  const tb = $("candTable").querySelector("tbody");
+  tb.innerHTML = "";
+  CANDIDATES.forEach(c => {
+    state[c.id] = state[c.id] || "extracted";
+    const tr = document.createElement("tr");
+    const conflict = dupFields.has(c.field) ? ' <span class="chip conflict">2 sources</span>' : "";
+    const conf = c.confidence>=0.95?"hi":"mid";
+    const st = state[c.id];
+    tr.innerHTML = `
+      <td class="field">${c.field}${conflict}</td>
+      <td class="val" title="${String(fmtVal(c.value)).replace(/"/g,"&quot;")}">${fmtVal(c.value)}${c.note?`<div class="note-line">ⓘ ${c.note}</div>`:""}${c.warning?`<div class="note-line">⚠ ${c.warning}</div>`:""}</td>
+      <td class="src">${fmtSrc(c.source)}</td>
+      <td class="conf ${conf}">${Math.round(c.confidence*100)}%</td>
+      <td id="st-${c.id}">${st==="extracted"?"<span style='color:#8a8c8d'>pending</span>":`<span class="chip ${st}">${st}</span>`}</td>
+      <td class="acts">
+        <button onclick="setSt('${c.id}','approved')">✓</button>
+        <button onclick="editVal('${c.id}', this)">✎</button>
+        <button onclick="setSt('${c.id}','rejected')">✕</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+  $("gaps").innerHTML = "<b>Not found in your documents</b> (no value will be invented for these):<br>" +
+    DATA_GAPS.map(g=>`• <span class="field">${g.field}</span> — ${g.reason}`).join("<br>");
+  refreshCounts();
+}
+function setSt(id, st) {
+  state[id] = st;
+  $("st-"+id).innerHTML = `<span class="chip ${st}">${st}</span>`;
+  refreshCounts();
+}
+function editVal(id, btn) {
+  const c = CANDIDATES.find(x=>x.id===id);
+  const cell = btn.closest("tr").querySelector(".val");
+  const cur = typeof c.value==="object" ? JSON.stringify(c.value) : c.value;
+  cell.innerHTML = "";
+  const inp = document.createElement("input");
+  inp.value = cur;
+  cell.appendChild(inp); inp.focus();
+  inp.onkeydown = (e)=>{ if(e.key==="Enter"){ c.value = inp.value; cell.textContent = fmtVal(inp.value); setSt(id,"edited"); } };
+  inp.onblur = ()=>{ c.value = inp.value; cell.textContent = fmtVal(inp.value); setSt(id,"edited"); };
+}
+function refreshCounts() {
+  const vals = Object.values(state);
+  const p = vals.filter(v=>v==="extracted").length;
+  const a = vals.filter(v=>v==="approved").length, e = vals.filter(v=>v==="edited").length, r = vals.filter(v=>v==="rejected").length;
+  $("counts").innerHTML = `<b>${p}</b> pending · <b>${a}</b> approved · <b>${e}</b> edited · <b>${r}</b> rejected`;
+  $("toGen").disabled = p>0 || (a+e)===0;
+  $("gateHint").textContent = p>0 ? "Review every fact to continue — approve, edit, or reject." : "Ready. Only approved facts will be used.";
+}
+$("approveAll").onclick = () => { CANDIDATES.forEach(c=>{ if(state[c.id]==="extracted") setSt(c.id,"approved"); }); };
+$("toGen").onclick = () => { go(3); runGen(); };
+
+// --- step 3 ---
+function runGen() {
+  const items=["g1","g2","g3"];
+  items.forEach((id,i)=>{
+    setTimeout(()=>{ items.forEach(x=>$(x).classList.remove("doing")); $(id).classList.add("doing"); }, i*1300);
+    setTimeout(()=>{ $(id).classList.remove("doing"); $(id).classList.add("done"); if(i===2) setTimeout(()=>go(4), 500); }, (i+1)*1300);
+  });
+}
+
+// --- step 4: edit toast ---
+let toastT;
+document.querySelectorAll("#paper [contenteditable]").forEach(el => {
+  el.addEventListener("blur", () => {
+    $("toast").classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(()=>$("toast").classList.remove("show"), 2200);
+  });
+});
+</script>
+</body>
+</html>

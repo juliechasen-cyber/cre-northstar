@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crenorthstar.local/schemas/crm-entry.schema.json",
+  "title": "CRM Entry",
+  "description": "Machine-consumed listing record. Missing values are omitted keys — never null or sentinel strings.",
+  "type": "object",
+  "required": ["dealId", "generatedAt", "listing"],
+  "properties": {
+    "dealId": { "type": "string" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "listing": {
+      "type": "object",
+      "required": ["propertyName", "dealStage"],
+      "properties": {
+        "propertyName": { "type": "string" },
+        "address": { "type": "string", "description": "Single-line formatted" },
+        "propertyType": { "type": "string" },
+        "units": { "type": "integer" },
+        "buildingSf": { "type": "number" },
+        "askingPrice": { "type": "number" },
+        "capRate": { "type": "number" },
+        "occupancy": { "type": "number" },
+        "noi": { "type": "number" },
+        "listingDate": { "type": "string", "format": "date" },
+        "offerDeadline": { "type": "string", "format": "date" },
+        "dealStage": { "type": "string", "enum": ["on-market", "under-loi", "under-contract", "closed", "withdrawn"] },
+        "notes": { "type": "string", "description": "2-3 sentence plain-text deal summary" }
+      },
+      "additionalProperties": false
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "firm": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "description"],
+        "properties": {
+          "date": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assetLinks": {
+      "type": "object",
+      "description": "Filled by the harness after rendering; keys = output names, values = URLs or paths",
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

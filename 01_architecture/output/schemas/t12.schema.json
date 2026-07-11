@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crenorthstar.local/schemas/t12.schema.json",
+  "title": "T12 Extract",
+  "description": "Structured output of t12-parser: normalized trailing-12 income and expense lines. Headline figures are mirrored into the extraction manifest as candidates.",
+  "type": "object",
+  "required": ["source", "period", "income", "expenses"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": ["file", "extractedAt"],
+      "properties": {
+        "file": { "type": "string" },
+        "extractedAt": { "type": "string", "format": "date-time" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "period": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string", "format": "date" },
+        "end": { "type": "string", "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "income": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/line" }
+    },
+    "expenses": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/line" }
+    },
+    "belowLine": {
+      "type": "array",
+      "description": "CapEx, debt service, depreciation — excluded from NOI and from all marketing outputs",
+      "items": { "$ref": "#/definitions/line" }
+    },
+    "totals": {
+      "type": "object",
+      "properties": {
+        "effectiveGrossIncome": { "type": "number" },
+        "totalOperatingExpenses": { "type": "number" },
+        "noiComputed": { "type": "number" },
+        "noiStated": { "type": "number", "description": "NOI as printed on the statement, if present" },
+        "expenseRatio": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "dataGaps": { "type": "array", "items": { "type": "string" } }
+  },
+  "definitions": {
+    "line": {
+      "type": "object",
+      "required": ["bucket", "originalLabel", "annual"],
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "enum": [
+            "gross-potential-rent", "vacancy-loss", "concessions", "bad-debt", "other-income", "effective-gross-income",
+            "taxes", "insurance", "utilities", "repairs-maintenance", "payroll", "management-fee", "marketing", "general-admin", "contract-services", "other-expense",
+            "capex", "debt-service", "depreciation"
+          ]
+        },
+        "originalLabel": { "type": "string" },
+        "annual": { "type": "number" },
+        "monthly": { "type": "array", "items": { "type": "number" }, "minItems": 12, "maxItems": 12 },
+        "source": {
+          "type": "object",
+          "properties": {
+            "sheet": { "type": "string" },
+            "row": { "type": "integer" },
+            "page": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "warning": { "type": "string", "description": "e.g. possible one-time item (>3x monthly median)" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
