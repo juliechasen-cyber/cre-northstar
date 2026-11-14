@@ -1,0 +1,42 @@
+{
+ "dealId": "demo-deal",
+ "generatedAt": "2026-07-14T17:00:00.000Z",
+ "items": [
+  {
+   "category": "financial",
+   "task": "Tie the T12 NOI of $692,800 to bank statements",
+   "why": "NOI drives the 6.33% cap pricing.",
+   "priority": "standard"
+  },
+  {
+   "category": "tenancy",
+   "task": "Audit the rent roll against executed leases",
+   "why": "The 8% loss-to-lease claim is the core of the upside story.",
+   "priority": "standard"
+  },
+  {
+   "category": "physical",
+   "task": "Roof, plumbing, and electrical inspection (1987 vintage)",
+   "why": "Original systems near end of service life affect capex budget.",
+   "priority": "standard"
+  },
+  {
+   "category": "legal",
+   "task": "Confirm zoning and any Mission Valley plan overlays",
+   "why": "Submarket is under active community-plan updates.",
+   "priority": "standard"
+  },
+  {
+   "category": "financial",
+   "task": "Verify tax reassessment impact at the $10.95M basis",
+   "why": "Prop 13 reset materially changes year-one expenses.",
+   "priority": "standard"
+  },
+  {
+   "category": "environmental",
+   "task": "Phase I environmental site assessment",
+   "why": "Standard institutional diligence requirement.",
+   "priority": "standard"
+  }
+ ]
+}

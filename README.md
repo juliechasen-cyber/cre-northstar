@@ -4,6 +4,8 @@ An AI deal-marketing pipeline for commercial real estate brokers. Upload an Offe
 
 Designed and built by [Julie Chasen](https://juliechasen.com).
 
+**[Open the live demo →](https://juliechasen-cyber.github.io/cre-northstar/)**
+
 ![Demo deal room: 12 generated outputs and an Investment Summary preview](docs/screenshots/demo-deal-room.png)
 
 ## What it does
@@ -34,7 +36,9 @@ Designed and built by [Julie Chasen](https://juliechasen.com).
 
 ## Try the demo
 
-The demo deal room uses a fictional property (Hillcrest Gardens Apartments). It needs no API key and costs nothing to run.
+**Live demo: [juliechasen-cyber.github.io/cre-northstar](https://juliechasen-cyber.github.io/cre-northstar/)**. It opens the deal room for a fictional property (Hillcrest Gardens Apartments) with every output pre-generated.
+
+To run the dashboard yourself (still free, no API key needed for the demo):
 
 ```bash
 cd 02_build
