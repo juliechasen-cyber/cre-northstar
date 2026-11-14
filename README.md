@@ -8,7 +8,7 @@ tags: []
 
 An AI deal-marketing pipeline for commercial real estate brokers. Upload an Offering Memo (plus an optional Rent Roll and T12), approve the extracted numbers, and get a full marketing package: 12 outputs, generated from facts the broker has signed off on.
 
-Designed and built by [Julie Chasen](https://juliechasen.com). Work in progress.
+Designed and built by [Julie Chasen](https://juliechasen.com).
 
 ![Demo deal room: 12 generated outputs and an Investment Summary preview](docs/screenshots/demo-deal-room.png)
 
