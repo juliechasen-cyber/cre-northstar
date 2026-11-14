@@ -1,0 +1,30 @@
+{
+ "dealId": "demo-deal",
+ "generatedAt": "2026-07-14T17:00:00.000Z",
+ "property": {
+  "name": "Hillcrest Gardens Apartments",
+  "address": {
+   "street": "4180 Terrace Crest Dr",
+   "city": "San Diego",
+   "state": "CA",
+   "zip": "92108"
+  },
+  "submarket": "Mission Valley",
+  "propertyType": "multifamily",
+  "yearBuilt": 1987,
+  "units": 48,
+  "buildingSf": 41280
+ },
+ "deal": {
+  "askingPrice": 10950000,
+  "offerDeadline": "2026-08-14",
+  "broker": {
+   "name": "Julie Chasen",
+   "firm": "CRE Northstar (demo)"
+  }
+ },
+ "financials": {
+  "noi": 692800,
+  "occupancy": 0.936
+ }
+}

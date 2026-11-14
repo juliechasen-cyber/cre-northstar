@@ -1,0 +1,53 @@
+{
+ "phase": "done",
+ "demo": true,
+ "costUsd": "0.00",
+ "assetLinks": {
+  "investment-summary": [
+   "demo-deal/investment-summary.docx",
+   "demo-deal/investment-summary.html"
+  ],
+  "executive-memo": [
+   "demo-deal/executive-memo.docx"
+  ],
+  "linkedin-announcement": [
+   "demo-deal/linkedin-announcement.txt",
+   "demo-deal/linkedin-1200x627.jpg",
+   "demo-deal/linkedin-1080x1080.jpg",
+   "demo-deal/linkedin-1080x1920.jpg"
+  ],
+  "investor-email": [
+   "demo-deal/investor-email.txt",
+   "demo-deal/investor-email.html"
+  ],
+  "email-drip": [
+   "demo-deal/email-drip.txt",
+   "demo-deal/email-drip.html"
+  ],
+  "listing-copy": [
+   "demo-deal/listing-copy.txt",
+   "demo-deal/listing-copy.html"
+  ],
+  "property-website": [
+   "demo-deal/property-website.html"
+  ],
+  "press-release": [
+   "demo-deal/press-release.docx"
+  ],
+  "sales-script": [
+   "demo-deal/sales-script.docx",
+   "demo-deal/sales-script.html"
+  ],
+  "launch-calendar": [
+   "demo-deal/launch-calendar.html",
+   "demo-deal/launch-calendar.ics"
+  ],
+  "dd-checklist": [
+   "demo-deal/dd-checklist.xlsx"
+  ],
+  "crm-entry": [
+   "demo-deal/crm-entry.json"
+  ]
+ },
+ "notes": {}
+}

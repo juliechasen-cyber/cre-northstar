@@ -1,0 +1,45 @@
+{
+  "dealId": "demo-deal",
+  "generatedAt": "2026-07-14T17:00:00.000Z",
+  "listing": {
+    "propertyName": "Hillcrest Gardens Apartments",
+    "address": "4180 Terrace Crest Dr, San Diego, CA 92108",
+    "propertyType": "multifamily",
+    "units": 48,
+    "buildingSf": 41280,
+    "askingPrice": 10950000,
+    "capRate": 0.0633,
+    "occupancy": 0.936,
+    "noi": 692800,
+    "listingDate": "2026-07-14",
+    "offerDeadline": "2026-08-14",
+    "dealStage": "on-market",
+    "notes": "Demo sample deal. Rent-roll upside story: in-place rents ~8% under market, 93.6% occupancy."
+  },
+  "contact": {
+    "name": "Julie Chasen",
+    "firm": "CRE Northstar (demo)",
+    "email": "demo@crenorthstar.example",
+    "phone": "(555) 014-0620",
+    "role": "Listing broker"
+  },
+  "activities": [
+    {
+      "date": "2026-07-13T03:41:12.432Z",
+      "description": "Marketing package generated (investment-summary, executive-memo, linkedin-announcement, investor-email, email-drip, listing-copy, property-website, press-release, sales-script, launch-calendar, dd-checklist)"
+    }
+  ],
+  "assetLinks": {
+    "investment-summary": "investment-summary.docx, investment-summary.html",
+    "executive-memo": "executive-memo.docx",
+    "linkedin-announcement": "linkedin-announcement.txt, linkedin-1200x627.jpg, linkedin-1080x1080.jpg, linkedin-1080x1920.jpg",
+    "investor-email": "investor-email.txt, investor-email.html",
+    "email-drip": "email-drip.txt, email-drip.html",
+    "listing-copy": "listing-copy.txt, listing-copy.html",
+    "property-website": "property-website.html",
+    "press-release": "press-release.docx",
+    "sales-script": "sales-script.docx, sales-script.html",
+    "launch-calendar": "launch-calendar.html, launch-calendar.ics",
+    "dd-checklist": "dd-checklist.xlsx"
+  }
+}
