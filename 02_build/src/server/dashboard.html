@@ -20,7 +20,13 @@
   .step.active .n { background: var(--lime); border-color: var(--lime); color: var(--navy); font-weight:700; }
   .step.done { color:#fff; }
   .step.done .n { background: var(--teal); border-color: var(--teal); color: var(--navy); }
-  .live-badge { margin-top:auto; font-size:11px; color:#ffffff80; border:1px solid #ffffff30; border-radius:6px; padding:8px 10px; line-height:1.5; }
+  .unlock { margin-top:auto; font-size:11px; color:#ffffffb0; border:1px solid #ffffff30; border-radius:6px; padding:8px 10px; margin-bottom:10px; }
+  .unlock label { display:block; font-weight:700; margin-bottom:5px; }
+  .unlock-row { display:flex; gap:6px; }
+  .unlock input { width:100%; min-width:0; font:inherit; padding:5px 8px; border:1px solid #ffffff40; border-radius:5px; background:#ffffff14; color:#fff; }
+  .unlock button { font:inherit; font-weight:700; border:none; border-radius:5px; padding:5px 10px; background:var(--lime); color:var(--navy); cursor:pointer; }
+  #unlockMsg { color:var(--lime); min-height:13px; margin-top:4px; }
+  .live-badge { font-size:11px; color:#ffffff80; border:1px solid #ffffff30; border-radius:6px; padding:8px 10px; line-height:1.5; }
   .live-badge b { color: var(--lime); }
   main { flex:1; padding: 36px 44px; max-width: 1060px; }
   .screen { display:none; } .screen.on { display:block; }
@@ -36,6 +42,10 @@
   .field-row { margin-bottom:18px; max-width:560px; }
   .field-row label { display:block; font-weight:700; color:var(--navy); font-size:14px; margin-bottom:6px; }
   .field-row input[type=text], .field-row select { width:100%; font:inherit; padding:10px 12px; border:1.5px solid var(--gray); border-radius:6px; background:#fff; }
+  .wf-hint { font-size:12.5px; color:#6b6d6e; margin-top:6px; min-height:16px; }
+  #sampleBtn { margin-left:10px; }
+  .room-actions { display:flex; gap:10px; margin:0 0 22px; }
+  .room-actions .btn { padding:7px 14px; font-size:13px; text-decoration:none; display:inline-block; }
   .cards { display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin:6px 0 24px; max-width:820px; }
   .cards.brand-cards { grid-template-columns: repeat(5,1fr); max-width:820px; }
   .card { background:#fff; border:1.5px dashed var(--gray); border-radius:10px; padding:18px 16px; text-align:center; min-height:150px; display:flex; flex-direction:column; justify-content:center; gap:6px; cursor:pointer; position:relative; overflow:hidden; }
@@ -55,8 +65,11 @@
   .card.filled .thumb-overlay { display:block; } .card .thumb-overlay { display:none; }
 
   .tabs { display:flex; gap:2px; margin: 4px 0 12px; border-bottom:1.5px solid var(--mist); max-width:820px; }
-  .tab { padding:9px 16px; font-size:13.5px; font-weight:700; color:#8a8c8d; background:none; border:none; cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; }
+  .tab { padding:9px 16px; font-size:13.5px; font-weight:700; color:#4d5c66; background:none; border:none; cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; }
+  .tab:not(.on):hover { color:var(--navy); border-bottom-color:var(--gray); }
   .tab.on { color:var(--navy); border-bottom-color: var(--lime); }
+  .tab .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--lime); margin-left:7px; vertical-align:1px; animation:pulseDot 1.8s ease-in-out infinite; }
+  @keyframes pulseDot { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.4; transform:scale(.75)} }
   .tab .badge { display:inline-block; background:var(--teal); color:var(--navy); border-radius:9px; padding:1px 7px; font-size:11px; margin-left:6px; font-weight:800; }
   .tab-pane { display:none; } .tab-pane.on { display:block; }
   .tab-note { font-size:12.5px; color:#6b6d6e; margin: 0 0 10px; max-width:660px; }
@@ -83,8 +96,10 @@
   .chip.edited { background:#e3f0ef; color:#3e7d7a; }
   .chip.rejected { background:#f6e3e3; color:#a04545; }
   .acts { white-space:nowrap; }
-  .acts button { border:none; background:var(--mist); border-radius:5px; padding:4px 9px; margin-right:4px; cursor:pointer; font-size:12px; }
+  .acts button { border:none; background:var(--mist); border-radius:5px; padding:4px 9px; margin-right:4px; cursor:pointer; font-size:12px; position:relative; }
   .acts button:hover { background:var(--teal); color:#fff; }
+  .acts button::after { content:attr(data-tip); position:absolute; right:calc(100% + 8px); top:50%; transform:translateY(-50%); background:var(--navy); color:#fff; font-size:11px; font-weight:700; padding:3px 9px; border-radius:4px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .12s; z-index:5; }
+  .acts button:hover::after { opacity:1; }
   .note-line { font-size:11.5px; color:#9a6b12; margin-top:3px; white-space:normal; }
   .gaps { background:#fff; border-left:4px solid var(--teal); border-radius:8px; padding:14px 18px; margin:18px 0; font-size:13px; }
   .gate-foot { display:flex; gap:12px; align-items:center; margin-top:20px; flex-wrap:wrap; }
@@ -111,6 +126,14 @@
     <div class="step" id="nav3"><span class="n">3</span> Generate</div>
     <div class="step" id="nav4"><span class="n">4</span> Marketing package</div>
   </nav>
+  <div class="unlock" id="unlock">
+    <label for="accessCode">Access code</label>
+    <div class="unlock-row">
+      <input type="password" id="accessCode" placeholder="••••••">
+      <button onclick="saveCode()">Save</button>
+    </div>
+    <div id="unlockMsg"></div>
+  </div>
   <div class="live-badge"><b>LIVE</b> — this dashboard runs the real pipeline on your machine. Documents you upload stay local; only the extraction calls go to the AI.</div>
 </aside>
 
@@ -126,7 +149,7 @@
 
     <div class="tabs">
       <button class="tab on" id="tab-docs" onclick="showTab('docs')">Documents</button>
-      <button class="tab" id="tab-brand" onclick="showTab('brand')">Brand assets <span class="badge" id="brand-count" style="display:none">0</span></button>
+      <button class="tab" id="tab-brand" onclick="showTab('brand')" title="Add your brokerage logo and property photos — they brand every output">Brand assets <span class="badge" id="brand-count" style="display:none">0</span><span class="dot" id="brand-dot"></span></button>
     </div>
 
     <div class="tab-pane on" id="pane-docs">
@@ -156,8 +179,15 @@
     <input type="file" id="f-photo3" accept=".jpg,.jpeg,.png" hidden>
     <input type="file" id="f-photo4" accept=".jpg,.jpeg,.png" hidden>
     <input type="file" id="f-logo" accept=".jpg,.jpeg,.png" hidden>
-    <div class="field-row"><label>Package</label><select id="workflow"></select></div>
+    <div class="field-row"><label>Package</label><select id="workflow"></select><div class="wf-hint" id="wfHint"></div></div>
+    <div class="field-row"><label>Press release type</label><select id="prType">
+      <option value="bringing-to-market" selected>Bringing to market — exclusive listing announcement</option>
+      <option value="coming-soon">Coming soon — pre-market buzz before materials circulate</option>
+      <option value="just-sold">Just sold — closed-deal announcement</option>
+    </select><div class="wf-hint" id="prHint"></div></div>
     <button class="btn btn-primary" id="processBtn" disabled>Process deal →</button>
+    <button class="btn btn-ghost" id="sampleBtn" title="Runs the bundled sample documents through the real pipeline (access code required)">Try a sample deal</button>
+    <div style="margin-top:16px; font-size:14px;"><a href="#demo" id="demoLink" style="font-weight:700; color:var(--navy)">Explore the demo deal room →</a> <span style="color:#6b6d6e">finished sample outputs, nothing to upload, free</span></div>
   </section>
 
   <!-- 2a · EXTRACTING -->
@@ -176,7 +206,10 @@
     <p class="sub" id="gateSub"></p>
     <div class="gate-head">
       <div class="counts" id="counts"></div>
-      <button class="btn btn-ghost" id="approveAll">Approve all remaining</button>
+      <div>
+        <button class="btn btn-ghost" id="resetAll" title="Return every fact to pending">Reset all</button>
+        <button class="btn btn-ghost" id="approveAll">Approve all remaining</button>
+      </div>
     </div>
     <div style="max-height:430px; overflow:auto; border-radius:10px;">
       <table id="candTable"><thead><tr><th>Field</th><th>Extracted value</th><th>Source</th><th>Conf.</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
@@ -201,6 +234,10 @@
     <div class="kicker">Step 4 of 4 · Deal room</div>
     <h1 id="doneTitle">Marketing package</h1>
     <p class="run-stats" id="doneStats"></p>
+    <div class="room-actions">
+      <button class="btn btn-ghost" id="copyRoom" title="This link reopens the deal room on this machine — bookmark or share it with yourself">Copy deal room link</button>
+      <a class="btn btn-ghost" id="emailRoom" href="#">Email me this link</a>
+    </div>
     <div class="gaps" id="doneNotes" style="display:none"></div>
     <div class="out-grid" id="outGrid"></div>
     <div id="previewWrap"></div>
@@ -209,14 +246,37 @@
 
 <script>
 const $ = (id) => document.getElementById(id);
+
+// --- access code: stored locally, appended to every gated call ---
+const codeVal = () => localStorage.getItem("nsCode") ?? "";
+const withCode = (u) => codeVal() ? u + (u.includes("?") ? "&" : "?") + "code=" + encodeURIComponent(codeVal()) : u;
+async function jfetch(url, opts) {
+  const r = await fetch(withCode(url), opts);
+  if (r.status === 401) {
+    $("unlock").style.outline = "2px solid var(--lime)";
+    $("accessCode").focus();
+    throw new Error("This action needs an access code — the demo deal room below is free to explore.");
+  }
+  return r.json();
+}
+function saveCode() {
+  localStorage.setItem("nsCode", $("accessCode").value.trim());
+  $("unlock").style.outline = "none";
+  $("unlockMsg").textContent = $("accessCode").value.trim() ? "code saved ✓" : "";
+  showErr(null);
+}
 const OUT_META = {
   "investment-summary": ["Investment Summary", "One-page teaser for first outreach."],
   "executive-memo": ["Executive Memo", "The “tell me more” document."],
   "linkedin-announcement": ["LinkedIn Announcement", "Post copy, under the “see more” fold."],
   "investor-email": ["Investor Email", "3 subject lines + body for the blast."],
+  "email-drip": ["Email Drip Sequence", "The follow-ups — launch to offers due."],
+  "listing-copy": ["Listing Site Copy", "LoopNet / Crexi fields, ready to paste."],
+  "launch-calendar": ["Launch Calendar", "Dated go-to-market plan + calendar import."],
   "pptx-om": ["PowerPoint OM", "Full offering deck."],
   "property-website": ["Property Website", "The shareable listing link."],
   "press-release": ["Press Release", "Wire format, draft quote flagged."],
+  "sales-script": ["Sales Script", "Investor call script — opening, value stack, objections, close."],
   "dd-checklist": ["Due Diligence Checklist", "Internal only — never in the marketing export."],
   "crm-entry": ["CRM Entry", "Structured record with asset links."],
 };
@@ -235,9 +295,31 @@ function go(n) {
 function showErr(msg) { $("err").style.display = msg ? "block" : "none"; $("err").textContent = msg ?? ""; }
 
 // --- workflows ---
+let WORKFLOWS = [];
 fetch("/api/workflows").then(r=>r.json()).then(ws => {
-  $("workflow").innerHTML = ws.map(w=>`<option value="${w.id}" ${w.id==="full-package"?"selected":""}>${w.name} — ${w.outputs.length} output${w.outputs.length>1?"s":""}</option>`).join("");
+  WORKFLOWS = ws;
+  $("workflow").innerHTML = ws.map(w=>`<option value="${w.id}" ${w.id==="full-package"?"selected":""}>${w.name}</option>`).join("");
+  updateWfHint();
 });
+function updateWfHint() {
+  const w = WORKFLOWS.find(x => x.id === $("workflow").value);
+  if (!w) return $("wfHint").textContent = "";
+  // don't repeat the count when the summary already states it
+  $("wfHint").textContent = /outputs?/i.test(w.summary)
+    ? w.summary
+    : `${w.summary} · ${w.outputs.length} output${w.outputs.length>1?"s":""}`;
+  // press-release type only matters when the package writes one
+  $("prType").closest(".field-row").style.display = w.outputs.includes("press-release") ? "" : "none";
+}
+$("workflow").addEventListener("change", updateWfHint);
+const PR_HINTS = {
+  "bringing-to-market": "Reaches investors researching the submarket and builds the broker's public record.",
+  "coming-soon": "For high-profile or generational assets — builds buzz before materials circulate. Price held back by default.",
+  "just-sold": "Celebrates the close, proves execution, attracts the next listing. Closing facts you haven't provided appear as bracketed slots.",
+};
+function updatePrHint(){ $("prHint").textContent = PR_HINTS[$("prType").value] ?? ""; }
+$("prType").addEventListener("change", updatePrHint);
+updatePrHint();
 
 // --- upload ---
 const chosen = {};
@@ -255,6 +337,7 @@ function updateBrandBadge() {
   const b = $("brand-count");
   b.textContent = n;
   b.style.display = n ? "inline-block" : "none";
+  $("brand-dot").style.display = n ? "none" : "inline-block";
 }
 function docCardId(slot) { return "c-"+(slot==="om"?"om":slot==="rentRoll"?"rr":"t12"); }
 
@@ -284,6 +367,22 @@ BRAND_SLOTS.forEach(slot => {
   });
 });
 
+async function beginExtraction(up) {
+  dealId = up.dealId;
+  location.hash = "deal=" + dealId; // bookmarkable — reload re-attaches to this deal
+  $("dealTag").textContent = "Deal · " + ($("dealName").value || dealId);
+  const parserLabel = { om: "Offering Memo parser", rentRoll: "Rent Roll parser", t12: "T12 parser" };
+  const parserRows = Object.keys(up.files).filter(k => parserLabel[k]).map(k =>
+    `<div class="parser">${parserLabel[k]}<div class="bar"><i></i></div></div>`);
+  const brandFiles = Object.keys(up.files).filter(k => /^photo[1-4]$|^logo$/.test(k));
+  if (brandFiles.length) parserRows.push(
+    `<div class="parser">Brand assets — ${brandFiles.length} file${brandFiles.length>1?"s":""} (local processing)<div class="bar"><i></i></div></div>`);
+  $("parserList").innerHTML = parserRows.join("");
+  go(2);
+  await jfetch("/api/extract?deal="+dealId, { method: "POST" });
+  pollExtract();
+}
+
 $("processBtn").onclick = async () => {
   showErr(null);
   $("processBtn").disabled = true;
@@ -291,26 +390,41 @@ $("processBtn").onclick = async () => {
   fd.append("dealName", $("dealName").value || "deal");
   for (const [slot, f] of Object.entries(chosen)) fd.append(slot, f);
   try {
-    const up = await fetch("/api/upload", { method: "POST", body: fd }).then(r=>r.json());
+    const up = await jfetch("/api/upload", { method: "POST", body: fd });
     if (up.error) throw new Error(up.error);
-    dealId = up.dealId;
-    location.hash = "deal=" + dealId; // bookmarkable — reload re-attaches to this deal
-    $("dealTag").textContent = "Deal · " + ($("dealName").value || dealId);
-    const parserLabel = { om: "Offering Memo parser", rentRoll: "Rent Roll parser", t12: "T12 parser" };
-    const parserRows = Object.keys(up.files).filter(k => parserLabel[k]).map(k =>
-      `<div class="parser">${parserLabel[k]}<div class="bar"><i></i></div></div>`);
-    const brandFiles = Object.keys(up.files).filter(k => /^photo[1-4]$|^logo$/.test(k));
-    if (brandFiles.length) parserRows.push(
-      `<div class="parser">Brand assets — ${brandFiles.length} file${brandFiles.length>1?"s":""} (local processing)<div class="bar"><i></i></div></div>`);
-    $("parserList").innerHTML = parserRows.join("");
-    go(2);
-    await fetch("/api/extract?deal="+dealId, { method: "POST" });
-    pollExtract();
+    await beginExtraction(up);
   } catch (e) { showErr(e.message); $("processBtn").disabled = false; }
 };
 
+$("sampleBtn").onclick = async () => {
+  showErr(null);
+  $("sampleBtn").disabled = true;
+  try {
+    if (!$("dealName").value) $("dealName").value = "Sample Deal";
+    const up = await jfetch("/api/sample", { method: "POST" });
+    if (up.error) throw new Error(up.error);
+    await beginExtraction(up);
+  } catch (e) { showErr(e.message); }
+  $("sampleBtn").disabled = false;
+};
+
+// --- demo deal room: pre-generated fictional outputs, free to explore ---
+async function loadDemo() {
+  try {
+    const s = await fetch("/api/demo").then(r=>r.json());
+    if (s.error) throw new Error(s.error);
+    dealId = "demo-deal";
+    $("dealName").value = "Hillcrest Gardens (Demo)";
+    $("dealTag").textContent = "Demo · Hillcrest Gardens";
+    location.hash = "demo";
+    showDone(s);
+    $("doneTitle").textContent = "Demo deal room — Hillcrest Gardens Apartments";
+    $("doneStats").innerHTML = "Sample outputs from a <b>fictional deal</b> — generated exactly the way a real run works, from broker-approved facts. Enter your access code (left) to run your own deal.";
+  } catch (e) { showErr(e.message); }
+}
+
 async function pollExtract() {
-  const s = await fetch("/api/status?deal="+dealId).then(r=>r.json());
+  const s = await jfetch("/api/status?deal="+dealId);
   if (s.phase === "error") { showErr("Extraction failed: " + s.error); go(1); $("processBtn").disabled = false; return; }
   if (s.phase === "review") return loadGate();
   $("extractNote").textContent = "Still reading… this is a real AI pass over your documents.";
@@ -356,9 +470,10 @@ function valCell(c){
 function fmtSrc(s){ const b=[(s.doc||"").toUpperCase()]; if(s.page)b.push("p."+s.page); if(s.sheet)b.push(s.sheet); if(s.row)b.push("row "+s.row); if(s.range)b.push(s.range); return b.join(" · "); }
 
 async function loadGate() {
-  const manifest = await fetch("/api/manifest?deal="+dealId).then(r=>r.json());
-  candidates = manifest.candidates;
-  $("gateSub").textContent = `${candidates.length} facts extracted from your documents. Nothing reaches a marketing output until you approve it here. Rows marked "2 sources" show where your documents disagree.`;
+  const manifest = await jfetch("/api/manifest?deal="+dealId);
+  // lowest confidence first — review the risky rows, then "Approve all remaining"
+  candidates = manifest.candidates.slice().sort((a, b) => (a.confidence ?? 1) - (b.confidence ?? 1));
+  $("gateSub").textContent = `${candidates.length} facts extracted from your documents, lowest-confidence first. Nothing reaches a marketing output until you approve it here. Rows marked "2 sources" show where your documents disagree.`;
   const seen = new Set(); const dup = new Set();
   candidates.forEach(c => { if (seen.has(c.field) && !c.field.endsWith("[]")) dup.add(c.field); seen.add(c.field); });
   const tb = $("candTable").querySelector("tbody");
@@ -373,9 +488,9 @@ async function loadGate() {
       <td class="conf ${c.confidence>=0.95?"hi":"mid"}">${Math.round(c.confidence*100)}%</td>
       <td id="st-${c.id}"><span style="color:#8a8c8d">pending</span></td>
       <td class="acts">
-        <button onclick="setSt('${c.id}','approved')">✓</button>
-        <button onclick="editVal('${c.id}', this)">✎</button>
-        <button onclick="setSt('${c.id}','rejected')">✕</button>
+        <button data-tip="Approve — click again to unapprove" aria-label="Approve" onclick="setSt('${c.id}','approved')">✓</button>
+        <button data-tip="Edit the value" aria-label="Edit" onclick="editVal('${c.id}', this)">✎</button>
+        <button data-tip="Reject — click again to undo" aria-label="Reject" onclick="setSt('${c.id}','rejected')">✕</button>
       </td>`;
     tb.appendChild(tr);
   });
@@ -393,7 +508,17 @@ async function loadGate() {
   refreshCounts();
   go(2.5);
 }
-function setSt(id, st) { state[id] = st; $("st-"+id).innerHTML = `<span class="chip ${st}">${st}</span>`; refreshCounts(); }
+// clicking the same status again reverts the fact to pending — nothing is locked in
+function setSt(id, st) {
+  if (state[id] === st) {
+    state[id] = "extracted";
+    $("st-"+id).innerHTML = `<span style="color:#8a8c8d">pending</span>`;
+  } else {
+    state[id] = st;
+    $("st-"+id).innerHTML = `<span class="chip ${st}">${st}</span>`;
+  }
+  refreshCounts();
+}
 function editVal(id, btn) {
   const c = candidates.find(x=>x.id===id);
   const cell = btn.closest("tr").querySelector(".val");
@@ -414,18 +539,22 @@ function refreshCounts() {
   $("gateHint").textContent = p>0 ? "Review every fact to continue — approve, edit, or reject." : "Ready. Only approved facts will be used.";
 }
 $("approveAll").onclick = () => candidates.forEach(c=>{ if(state[c.id]==="extracted") setSt(c.id,"approved"); });
+$("resetAll").onclick = () => candidates.forEach(c=>{
+  if (state[c.id] !== "extracted") { state[c.id] = "extracted"; $("st-"+c.id).innerHTML = `<span style="color:#8a8c8d">pending</span>`; }
+  refreshCounts();
+});
 
 $("toGen").onclick = async () => {
   showErr(null);
   const decisions = candidates.map(c => ({ id: c.id, status: state[c.id], editedValue: c.editedValue }));
-  await fetch("/api/review?deal="+dealId, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ decisions }) });
-  await fetch(`/api/generate?deal=${dealId}&workflow=${$("workflow").value}`, { method: "POST" });
+  await jfetch("/api/review?deal="+dealId, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ decisions }) });
+  await jfetch(`/api/generate?deal=${dealId}&workflow=${$("workflow").value}&press=${$("prType").value}`, { method: "POST" });
   go(3);
   pollGenerate();
 };
 
 async function pollGenerate() {
-  const s = await fetch("/api/status?deal="+dealId).then(r=>r.json());
+  const s = await jfetch("/api/status?deal="+dealId);
   if (s.phase === "error") { showErr("Generation didn't finish: " + s.error); go(2.5); return; }
   if (s.phase === "done") return showDone(s);
   $("genPhase").textContent = s.phase === "analyzing" ? "Assembling deal facts — reconciling sources…" : `Writing ${ (s.outputs??[]).length } outputs…`;
@@ -442,23 +571,54 @@ function showDone(s) {
   if (n.skipped?.length) bits.push(`<b>Not produced this run:</b> ${n.skipped.map(x=>x.name).join(", ")} — hit Generate again to retry.`);
   $("doneNotes").style.display = bits.length ? "block" : "none";
   $("doneNotes").innerHTML = bits.join("<br><br>");
-  $("outGrid").innerHTML = Object.entries(s.assetLinks).map(([name, files]) => {
+  $("outGrid").innerHTML = Object.entries(s.assetLinks).map(([name, filesRaw]) => {
     const [title, desc] = OUT_META[name] ?? [name, ""];
-    const links = files.map(f => {
-      const base = f.split("/").pop();
+    const links = filesRaw.map(fRaw => {
+      const base = fRaw.split("/").pop();
+      const f = withCode(fRaw);
+      if (base === "linkedin-announcement.txt") return `<a href="${f}" target="_blank">View</a><a href="#" onclick="return copyPost(this,'${f}')">📋 Copy post</a>`;
+      if (base === "linkedin-1200x627.jpg") return `<a href="${f}" download="${base}">⬇ Link (1200×627)</a>`;
+      if (base === "linkedin-1080x1080.jpg") return `<a href="${f}" download="${base}">⬇ Square (1080×1080)</a>`;
+      if (base === "linkedin-1080x1920.jpg") return `<a href="${f}" download="${base}">⬇ Story (1080×1920)</a>`;
+      if (base === "linkedin-feed-1200x1200.jpg") return `<a href="${f}" download="${base}">⬇ Feed image (1200×1200)</a>`;
+      if (base === "linkedin-link-1200x628.jpg") return `<a href="${f}" download="${base}">⬇ Link image (1200×628)</a>`;
       if (base === "linkedin-image.jpg") return `<a href="${f}" download="${base}">⬇ Image (1200×627)</a>`;
-      const label = base.endsWith(".docx") ? "⬇ Word" : base.endsWith(".pptx") ? "⬇ PowerPoint" : base.endsWith(".xlsx") ? "⬇ Excel" : base.endsWith(".html") ? "Open" : base.endsWith(".jpg")||base.endsWith(".png") ? "⬇ Image" : "View";
+      const label = base.endsWith(".docx") ? "⬇ Word" : base.endsWith(".pptx") ? "⬇ PowerPoint" : base.endsWith(".xlsx") ? "⬇ Excel" : base.endsWith(".ics") ? "⬇ Calendar (.ics)" : base.endsWith(".html") ? "Open" : base.endsWith(".jpg")||base.endsWith(".png") ? "⬇ Image" : "View";
       return `<a href="${f}" ${base.endsWith(".html")||base.endsWith(".txt")||base.endsWith(".json")?'target="_blank"':""} ${base.endsWith(".jpg")||base.endsWith(".png")?`download="${base}"`:""}>${label}</a>`;
     }).join("");
     return `<div class="out live"><div class="t">${title}</div>${desc}<div class="links">${links}</div></div>`;
   }).join("");
   const summary = (s.assetLinks["investment-summary"] ?? []).find(f=>f.endsWith(".html"));
-  $("previewWrap").innerHTML = summary ? `<h2 style="margin:8px 0 12px">Preview — Investment Summary</h2><iframe class="preview" src="${summary}"></iframe>` : "";
+  $("previewWrap").innerHTML = summary ? `<h2 style="margin:8px 0 12px">Preview — Investment Summary</h2><iframe class="preview" src="${withCode(summary)}"></iframe>` : "";
+  const roomName = ($("dealName").value || "Deal") + " — deal room";
+  $("emailRoom").href = "mailto:?subject=" + encodeURIComponent(roomName) +
+    "&body=" + encodeURIComponent("Your CRE Northstar deal room:\n" + location.href +
+    "\n\nThis link opens on the machine where CRE Northstar is running.");
   go(4);
 }
 
+async function copyPost(el, f) {
+  try {
+    const t = await fetch(f).then(r => r.text()); // f already carries the code
+    await navigator.clipboard.writeText(t.trim());
+    const old = el.textContent; el.textContent = "Copied ✓";
+    setTimeout(() => { el.textContent = old; }, 1600);
+  } catch { showErr("Couldn't copy to the clipboard — use View and copy manually."); }
+  return false;
+}
+$("copyRoom").onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(location.href);
+    $("copyRoom").textContent = "Copied ✓";
+    setTimeout(() => { $("copyRoom").textContent = "Copy deal room link"; }, 1600);
+  } catch { showErr("Couldn't copy to the clipboard — copy the address bar URL instead."); }
+};
+
 // --- resume: #deal=<id> re-attaches to a saved deal (survives restarts) ---
 (async function resume() {
+  $("accessCode").value = codeVal();
+  $("demoLink").onclick = (e) => { e.preventDefault(); loadDemo(); };
+  if (location.hash === "#demo") return loadDemo();
   const m = location.hash.match(/^#deal=([\w-]+)$/);
   if (!m) return;
   dealId = m[1];
@@ -466,7 +626,7 @@ function showDone(s) {
   $("dealName").value = nice;
   $("dealTag").textContent = "Deal · " + nice;
   try {
-    const s = await fetch("/api/status?deal=" + dealId).then(r => r.json());
+    const s = await jfetch("/api/status?deal=" + dealId);
     if (s.phase === "done") return showDone(s);
     if (s.phase === "analyzing" || s.phase === "generating") { go(3); return pollGenerate(); }
     if (s.phase === "extracting" || s.phase === "uploaded") { $("parserList").innerHTML = ""; go(2); return pollExtract(); }

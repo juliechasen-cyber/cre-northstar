@@ -6,8 +6,9 @@
 # Dependencies
 node_modules/
 
-# Generated demo outputs
-02_build/runs/
+# Pipeline runs hold real listings; only the fictional demo deal is public
+02_build/runs/*
+!02_build/runs/demo-deal/
 
 # OS / editor
 .DS_Store

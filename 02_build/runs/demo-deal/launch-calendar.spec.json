@@ -1,0 +1,83 @@
+{
+ "docTitle": "Hillcrest Gardens — Launch Calendar",
+ "meta": "Jul 14 launch → offers due Aug 14",
+ "timeline": [
+  {
+   "date": "2026-07-14",
+   "channel": "Listing sites",
+   "title": "Post to LoopNet + Crexi",
+   "description": "Paste the listing-copy fields"
+  },
+  {
+   "date": "2026-07-14",
+   "channel": "LinkedIn",
+   "title": "Launch announcement",
+   "description": "Post linkedin-1080x1080.jpg with the announcement copy"
+  },
+  {
+   "date": "2026-07-14",
+   "channel": "Email",
+   "title": "Launch email (1 of 4)",
+   "description": "Send email 1 of the drip sequence"
+  },
+  {
+   "date": "2026-07-15",
+   "channel": "Calls",
+   "title": "Call-down block begins",
+   "description": "Top 20 buyers, use the sales script"
+  },
+  {
+   "date": "2026-07-16",
+   "channel": "Press",
+   "title": "Press release to trade press",
+   "description": "Bringing-to-market release, quote approved"
+  },
+  {
+   "date": "2026-07-21",
+   "channel": "Email",
+   "title": "Follow-up email (2 of 4)",
+   "description": "Send email 2 of the drip sequence"
+  },
+  {
+   "date": "2026-07-23",
+   "channel": "LinkedIn",
+   "title": "Second LinkedIn touch",
+   "description": "Comment/repost window on the launch post"
+  },
+  {
+   "date": "2026-07-28",
+   "channel": "Email",
+   "title": "Tour nudge email (3 of 4)",
+   "description": "Send email 3 of the drip sequence"
+  },
+  {
+   "date": "2026-07-29",
+   "channel": "Tours",
+   "title": "Tour window opens",
+   "description": "Tue/Thu slots through Aug 6"
+  },
+  {
+   "date": "2026-08-05",
+   "channel": "Calls",
+   "title": "Pipeline review call-down",
+   "description": "Everyone holding the OM — use objections table"
+  },
+  {
+   "date": "2026-08-07",
+   "channel": "Email",
+   "title": "Last-call email (4 of 4)",
+   "description": "Send email 4 of the drip sequence"
+  },
+  {
+   "date": "2026-08-12",
+   "channel": "Calls",
+   "title": "Final call-down day",
+   "description": "Confirm offers in motion"
+  },
+  {
+   "date": "2026-08-14",
+   "channel": "Deadline",
+   "title": "OFFERS DUE"
+  }
+ ]
+}

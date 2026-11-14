@@ -20,6 +20,27 @@ two jobs: market this deal, and make the broker look institutional.
 - **Hashtags** — 3–5, specific over generic: #CRE #Multifamily +
   #{City}RealEstate. No #blessed-tier tags.
 
+## Share image (`imageCard`)
+
+The harness renders a branded share image **in the deal's own brand** —
+the OM's extracted colors and fonts, the property's cover/hero photo, and
+the broker's actual logo (never CRE Northstar's mark) — at the three
+standard LinkedIn sizes: 1200×627 (link/sponsored), 1080×1080 (feed),
+1080×1920 (vertical/story). You supply only the copy printed on it — keep
+it minimal; the post text does the talking:
+
+- **kicker** — "OFFERS DUE <MONTH D>" when deal-facts has a deadline
+  (urgency is the most action-driving line on a social image), else
+  "NOW ON MARKET".
+- **headline** — the property name (e.g. "Tara Oceanside Apartment
+  Homes"), ≤ 40 chars.
+- **subline** — type · units · location ("Multifamily · 62 Units ·
+  Oceanside, CA").
+- **stats** — the asking price FIRST, always, when the deal is priced;
+  at most one more proof number (cap rate). Omit what isn't in
+  deal-facts.
+- **brokerLine** — Name · Firm.
+
 ## Rules
 
 - ≤ 1,100 characters (safely under LinkedIn's 1,300 "see more" fold for

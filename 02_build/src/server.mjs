@@ -15,7 +15,7 @@ import { generate } from "./steps/generate.mjs";
 import { render } from "./steps/render.mjs";
 import { usageSummary } from "./lib/client.mjs";
 import { readJson, writeJson } from "./lib/files.mjs";
-import { archRoot, runsDir, runDir } from "./lib/paths.mjs";
+import { archRoot, fixturesDir, runsDir, runDir } from "./lib/paths.mjs";
 
 const PORT = 4820;
 const dashboardHtml = path.join(path.dirname(fileURLToPath(import.meta.url)), "server", "dashboard.html");
@@ -67,6 +67,7 @@ const MIME = {
   ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ".ics": "text/calendar; charset=utf-8",
 };
 
 function sendJson(res, code, obj) {
@@ -174,7 +175,7 @@ async function startExtract(dealId) {
   }
 }
 
-async function startGenerate(dealId, workflowId) {
+async function startGenerate(dealId, workflowId, options = {}) {
   const workflow = workflows.workflows.find((w) => w.id === workflowId);
   if (!workflow) return setJob(dealId, { phase: "error", error: `unknown workflow ${workflowId}` });
   try {
@@ -195,7 +196,7 @@ async function startGenerate(dealId, workflowId) {
       analysis = readJson(path.join(runDir(dealId), "analysis-notes.json")).notes ?? [];
     } catch {}
     setJob(dealId, { phase: "generating", outputs: workflow.outputs });
-    const gen = await generate({ dealId, outputs: workflow.outputs });
+    const gen = await generate({ dealId, outputs: workflow.outputs, options });
     const rr = await render({ dealId, outputs: gen.produced });
     const skipped = [...gen.skipped, ...rr.skipped];
     const usage = usageSummary();
@@ -220,12 +221,56 @@ const server = http.createServer(async (req, res) => {
   const dealId = url.searchParams.get("deal");
 
   try {
+    // --- access gate: when ACCESS_CODE is set (.env), everything that costs
+    // money or exposes deal data requires it. Publicly open: the dashboard
+    // shell, the workflow list, and the fictional demo deal room.
+    const open =
+      url.pathname === "/" || url.pathname === "/index.html" ||
+      url.pathname === "/api/workflows" || url.pathname === "/api/demo" ||
+      url.pathname.startsWith("/runs/demo-deal/");
+    if (process.env.ACCESS_CODE && !open) {
+      const given = req.headers["x-access-code"] ?? url.searchParams.get("code");
+      if (given !== process.env.ACCESS_CODE)
+        return sendJson(res, 401, { error: "access code required" });
+    }
+
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       return res.end(fs.readFileSync(dashboardHtml));
     }
 
+    // the pre-built fictional deal room — free to explore, never runs the pipeline
+    if (req.method === "GET" && url.pathname === "/api/demo") {
+      try {
+        return sendJson(res, 200, readJson(path.join(runDir("demo-deal"), "job.json")));
+      } catch {
+        return sendJson(res, 404, { error: "demo deal room is not built on this machine" });
+      }
+    }
+
     if (req.method === "POST" && url.pathname === "/api/upload") return handleUpload(req, res);
+
+    // demo flow — stages the bundled sample deal as if the broker uploaded it;
+    // extraction and generation then run the real pipeline, same as any deal
+    if (req.method === "POST" && url.pathname === "/api/sample") {
+      const src = path.join(fixturesDir, "demo-deal");
+      const sampleFiles = { om: "offering-memo.pdf", rentRoll: "rent-roll.xlsx", t12: "t12.xlsx" };
+      const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "");
+      let sampleId = `sample-deal-${stamp}`;
+      if (fs.existsSync(runDir(sampleId))) sampleId += `-${Math.random().toString(36).slice(2, 5)}`;
+      const inputDir = path.join(runDir(sampleId), "inputs");
+      const files = {};
+      for (const [slot, name] of Object.entries(sampleFiles)) {
+        if (!fs.existsSync(path.join(src, name))) continue;
+        fs.mkdirSync(inputDir, { recursive: true });
+        fs.copyFileSync(path.join(src, name), path.join(inputDir, name));
+        files[slot] = name;
+      }
+      if (!Object.keys(files).length)
+        return sendJson(res, 500, { error: "sample deal files are missing from fixtures/demo-deal" });
+      setJob(sampleId, { phase: "uploaded", files });
+      return sendJson(res, 200, { dealId: sampleId, files });
+    }
 
     if (req.method === "POST" && url.pathname === "/api/extract") {
       startExtract(dealId); // async — poll /api/status
@@ -257,7 +302,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/api/generate") {
-      startGenerate(dealId, url.searchParams.get("workflow") ?? "full-package"); // async — poll
+      startGenerate(dealId, url.searchParams.get("workflow") ?? "full-package", {
+        pressReleaseType: url.searchParams.get("press") ?? "bringing-to-market",
+      }); // async — poll
       return sendJson(res, 200, { started: true });
     }
 

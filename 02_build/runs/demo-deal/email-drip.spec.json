@@ -1,0 +1,46 @@
+{
+  "docTitle": "Hillcrest Gardens — Email Campaign",
+  "meta": "4 touches · launch to offers due",
+  "emails": [
+    {
+      "send": "Tue Jul 14 — launch",
+      "purpose": "The announcement.",
+      "subjectOptions": [
+        "48-unit Mission Valley multifamily at a 6.33% cap",
+        "New exclusive: Hillcrest Gardens Apartments"
+      ],
+      "body": "{FIRST_NAME},\n\nWe've brought Hillcrest Gardens Apartments to market — 48 units in Mission Valley, asking $10,950,000 at a 6.33% cap on in-place income.\n\nIn-place rents are roughly 8% under market, and occupancy is 93.6%.\n\nReply and I'll send the OM today."
+    },
+    {
+      "send": "Tue Jul 21 — follow-up",
+      "purpose": "One fact the launch email didn't lead with.",
+      "subjectOptions": [
+        "The rent roll story at Hillcrest Gardens",
+        "$228K per unit in Mission Valley"
+      ],
+      "body": "{FIRST_NAME},\n\nA number worth a second look: Hillcrest Gardens is priced at $228,125 per unit while in-place rents sit about 8% under market across both floor plans.\n\nThe OM is in circulation — happy to walk the rent roll with you."
+    },
+    {
+      "send": "Tue Jul 28 — tour nudge",
+      "purpose": "One-question email; offer the walkthrough.",
+      "subjectOptions": [
+        "Underwriting Hillcrest Gardens?",
+        "15 minutes on the Hillcrest numbers"
+      ],
+      "body": "{FIRST_NAME},\n\nAre you underwriting Hillcrest Gardens? If there's a number you need to see supported, that's a 15-minute call.\n\nTours are running next week — Tuesday or Thursday work well."
+    },
+    {
+      "send": "Fri Aug 7 — last call",
+      "purpose": "Deadline front and center. Shortest email of the four.",
+      "subjectOptions": [
+        "Offers due Friday, Hillcrest Gardens"
+      ],
+      "body": "{FIRST_NAME},\n\nOffers for Hillcrest Gardens Apartments are due Friday, August 14.\n\n48 units · $10,950,000 · 6.33% cap.\n\n15 minutes this week if you're finalizing."
+    }
+  ],
+  "signatureLines": [
+    "Julie Chasen",
+    "CRE Northstar (demo)",
+    "(555) 014-0620 · demo@crenorthstar.example · Lic. #00000000"
+  ]
+}
