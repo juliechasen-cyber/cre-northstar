@@ -1,0 +1,53 @@
+{
+ "phase": "done",
+ "demo": true,
+ "costUsd": "0.00",
+ "assetLinks": {
+  "investment-summary": [
+   "/runs/demo-deal/investment-summary.docx",
+   "/runs/demo-deal/investment-summary.html"
+  ],
+  "executive-memo": [
+   "/runs/demo-deal/executive-memo.docx"
+  ],
+  "linkedin-announcement": [
+   "/runs/demo-deal/linkedin-announcement.txt",
+   "/runs/demo-deal/linkedin-1200x627.jpg",
+   "/runs/demo-deal/linkedin-1080x1080.jpg",
+   "/runs/demo-deal/linkedin-1080x1920.jpg"
+  ],
+  "investor-email": [
+   "/runs/demo-deal/investor-email.txt",
+   "/runs/demo-deal/investor-email.html"
+  ],
+  "email-drip": [
+   "/runs/demo-deal/email-drip.txt",
+   "/runs/demo-deal/email-drip.html"
+  ],
+  "listing-copy": [
+   "/runs/demo-deal/listing-copy.txt",
+   "/runs/demo-deal/listing-copy.html"
+  ],
+  "property-website": [
+   "/runs/demo-deal/property-website.html"
+  ],
+  "press-release": [
+   "/runs/demo-deal/press-release.docx"
+  ],
+  "sales-script": [
+   "/runs/demo-deal/sales-script.docx",
+   "/runs/demo-deal/sales-script.html"
+  ],
+  "launch-calendar": [
+   "/runs/demo-deal/launch-calendar.html",
+   "/runs/demo-deal/launch-calendar.ics"
+  ],
+  "dd-checklist": [
+   "/runs/demo-deal/dd-checklist.xlsx"
+  ],
+  "crm-entry": [
+   "/runs/demo-deal/crm-entry.json"
+  ]
+ },
+ "notes": {}
+}

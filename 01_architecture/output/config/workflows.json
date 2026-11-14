@@ -6,15 +6,18 @@
     {
       "id": "full-package",
       "name": "Full Marketing Package",
-      "summary": "All 9 outputs — the flagship run.",
+      "summary": "The flagship run — every output except the PowerPoint OM (brokers already have one; principals can request it separately).",
       "outputs": [
         "investment-summary",
         "executive-memo",
         "linkedin-announcement",
         "investor-email",
-        "pptx-om",
+        "email-drip",
+        "listing-copy",
         "property-website",
         "press-release",
+        "sales-script",
+        "launch-calendar",
         "dd-checklist",
         "crm-entry"
       ],

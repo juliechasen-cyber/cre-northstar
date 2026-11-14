@@ -1,0 +1,71 @@
+{
+ "title": "Hillcrest Gardens Apartments",
+ "addressLine": "4180 Terrace Crest Dr, San Diego, CA 92108",
+ "positioning": "48 units in Mission Valley — the upside is in the rent roll.",
+ "heroStats": [
+  {
+   "label": "Asking Price",
+   "value": "$10,950,000"
+  },
+  {
+   "label": "Cap Rate",
+   "value": "6.33%"
+  },
+  {
+   "label": "Units",
+   "value": "48"
+  },
+  {
+   "label": "Occupancy",
+   "value": "93.6%"
+  }
+ ],
+ "overview": "Hillcrest Gardens Apartments brings 48 units to market at a 6.33% cap on in-place income. In-place rents sit roughly 8% under market across both floor plans, and occupancy has held at 93.6% through the trailing period.",
+ "highlights": [
+  "48 units at $228,125 per unit",
+  "6.33% cap rate on in-place income",
+  "In-place rents ~8% under market",
+  "93.6% occupancy"
+ ],
+ "financials": {
+  "periodLabel": "Trailing 12 months, Jul 2025 – Jun 2026",
+  "rows": [
+   {
+    "label": "Net Operating Income",
+    "value": "$692,800"
+   },
+   {
+    "label": "Total Revenue",
+    "value": "$1,214,600"
+   },
+   {
+    "label": "Operating Expenses",
+    "value": "$521,800"
+   },
+   {
+    "label": "Price / Unit",
+    "value": "$228,125"
+   },
+   {
+    "label": "Price / SF",
+    "value": "$265"
+   }
+  ]
+ },
+ "location": {
+  "addressLine": "Mission Valley, San Diego, CA",
+  "blurb": "Mission Valley sits at the center of San Diego's freeway and trolley network, minutes from both employment cores and the coast — a submarket where stable occupancy meets steady rent growth."
+ },
+ "contact": {
+  "heading": "Offer Process",
+  "processLine": "OM and diligence materials available upon executed confidentiality agreement.",
+  "deadlineLine": "Offers due August 14, 2026",
+  "brokerLine": "Julie Chasen · CRE Northstar (demo)",
+  "contactLine": "(555) 014-0620 · demo@crenorthstar.example · Lic. #00000000"
+ },
+ "cta": {
+  "label": "Request the OM",
+  "email": "demo@crenorthstar.example",
+  "subject": "OM Request — Hillcrest Gardens Apartments"
+ }
+}

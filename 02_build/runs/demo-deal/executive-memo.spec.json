@@ -1,0 +1,61 @@
+{
+ "docTitle": "Hillcrest Gardens Apartments — Executive Memo",
+ "subtitle": "4180 Terrace Crest Dr, San Diego, CA 92108",
+ "meta": "Prepared July 14, 2026 · Confidential · DEMO SAMPLE",
+ "sections": [
+  {
+   "heading": "The Opportunity",
+   "paragraphs": [
+    "Hillcrest Gardens Apartments is a 48-unit multifamily community in San Diego's Mission Valley submarket, offered at $10,950,000 — a 6.33% capitalization rate on trailing-twelve-month net operating income of $692,800.",
+    "The offering represents a rent-roll story rather than a construction story: in-place rents average approximately 8% below market across both floor plans, and occupancy has held at 93.6% through the trailing period."
+   ]
+  },
+  {
+   "heading": "Financial Performance",
+   "paragraphs": [
+    "The property produced $1,214,600 in total revenue against $521,800 in operating expenses over the trailing twelve months."
+   ],
+   "table": {
+    "caption": "Trailing 12 months, Jul 2025 – Jun 2026",
+    "rows": [
+     {
+      "label": "Net Operating Income",
+      "value": "$692,800"
+     },
+     {
+      "label": "Total Revenue",
+      "value": "$1,214,600"
+     },
+     {
+      "label": "Operating Expenses",
+      "value": "$521,800"
+     },
+     {
+      "label": "Price / Unit",
+      "value": "$228,125"
+     },
+     {
+      "label": "Price / SF",
+      "value": "$265"
+     }
+    ]
+   }
+  },
+  {
+   "heading": "Property",
+   "paragraphs": [
+    "Built in 1987, the community comprises 41,280 rentable square feet across 28 one-bedroom and 20 two-bedroom units. The unit interiors are original-plus condition, giving the next owner a straightforward value-add path as leases roll."
+   ]
+  },
+  {
+   "heading": "Offer Process",
+   "paragraphs": [
+    "Offers are due August 14, 2026. The offering memorandum and diligence materials are available upon execution of a confidentiality agreement."
+   ]
+  }
+ ],
+ "footerLines": [
+  "Julie Chasen · CRE Northstar (demo)",
+  "(555) 014-0620 · demo@crenorthstar.example · Lic. #00000000"
+ ]
+}

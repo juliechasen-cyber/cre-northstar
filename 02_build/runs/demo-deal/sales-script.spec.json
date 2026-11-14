@@ -1,0 +1,63 @@
+{
+ "docTitle": "Hillcrest Gardens — Investor Call Script",
+ "subtitle": "Multifamily · 48 units · San Diego, CA",
+ "meta": "Internal — broker use only · demo sample",
+ "sections": [
+  {
+   "heading": "Opening — 15 seconds",
+   "coach": "Direct and unhurried. Reason for the call in the first breath.",
+   "say": [
+    "Hi [NAME], Julie Chasen with CRE Northstar. The purpose of my call is a 48-unit multifamily listing we just brought to market in Mission Valley — I think it fits what you've been buying. Did I catch you at a workable moment?"
+   ]
+  },
+  {
+   "heading": "The hook",
+   "say": [
+    "It's Hillcrest Gardens Apartments — 48 units, asking $10,950,000, and it's coming to market at a 6.33% cap on in-place income."
+   ]
+  },
+  {
+   "heading": "Value stack",
+   "coach": "One number per line. Pause after each.",
+   "say": [
+    "That's $228,125 a unit in a submarket where replacement cost runs well above that.",
+    "In-place rents are about 8% under market across both floor plans — the upside is in the rent roll, not a renovation budget.",
+    "Occupancy has held at 93.6% through the trailing twelve months."
+   ]
+  },
+  {
+   "heading": "Qualifying questions",
+   "say": [
+    "Are you actively acquiring in San Diego right now?",
+    "What are you solving for this year — yield, scale, or a 1031 clock?"
+   ]
+  },
+  {
+   "heading": "Close",
+   "say": [
+    "I'll send the OM today. Do you have 15 minutes Thursday to walk the numbers together? Offers are due August 14, so the timeline matters."
+   ]
+  }
+ ],
+ "objections": [
+  {
+   "objection": "\"Just send me the OM.\"",
+   "response": "Absolutely — it'll be in your inbox today. Most buyers find 15 minutes on the rent roll saves them a week of back-and-forth; can I grab Thursday morning?"
+  },
+  {
+   "objection": "\"The price seems high.\"",
+   "response": "At $228,125 a unit with rents 8% under market, the going-in cap understates the stabilized yield. The market will set the final number — that's what the offer process is for."
+  },
+  {
+   "objection": "\"We're not buying right now.\"",
+   "response": "Understood — what does your timeline look like? I'll send the OM for your file either way, and if someone in your network is active in San Diego, I'd welcome the introduction."
+  }
+ ],
+ "voicemail": [
+  "Hi [NAME], Julie Chasen with CRE Northstar. We just listed a 48-unit multifamily in Mission Valley at a 6.33% cap — offers due August 14. I'll email the summary now; call me back at (555) 014-0620 if it fits your criteria."
+ ],
+ "footerLines": [
+  "Julie Chasen · CRE Northstar (demo)",
+  "(555) 014-0620 · demo@crenorthstar.example · Lic. #00000000"
+ ]
+}

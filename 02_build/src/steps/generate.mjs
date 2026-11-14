@@ -11,7 +11,7 @@ const PARALLEL = 4; // parallel generator calls per wave — polite to rate limi
 // editable <name>.spec.json each. Grounding enforced in code, not just
 // prompt: risks[] reaches only generators flagged includeRisks (dd-checklist);
 // manifest data gaps only those flagged includeGaps.
-export async function generate({ dealId, outputs }) {
+export async function generate({ dealId, outputs, options = {} }) {
   const outDir = runDir(dealId);
   const dealFacts = readJson(path.join(outDir, "deal-facts.json"));
   const manifest = readJson(path.join(outDir, "manifest.json"));
@@ -48,6 +48,9 @@ export async function generate({ dealId, outputs }) {
         "\n\n## Brand guidelines\n\n" +
         brand +
         entry.contract +
+        (name === "press-release" && options.pressReleaseType
+          ? `\n\n## Release type for this run\n\nThe broker selected "${options.pressReleaseType}". Write that release per the Release types section of your instructions.`
+          : "") +
         `\n\nGiven values: dealId "${dealId}", generatedAt "${nowIso}", listingDate "${nowIso.slice(0, 10)}".`;
 
       const spec = await jsonCall({ label: name, system, userBlocks: blocks });

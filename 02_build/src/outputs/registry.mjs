@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
-import Jimp from "jimp";
 import { renderDocx as renderSummaryDocx, renderHtml as renderSummaryHtml } from "../render/summary.mjs";
 import { renderProseDocx } from "../render/prose-docx.mjs";
+import { renderLinkedInImages } from "../render/linkedin-image.mjs";
+import { renderScriptDocx, renderScriptHtml } from "../render/script.mjs";
+import { renderDrip, renderListing, renderCalendar } from "../render/campaign.mjs";
 import { renderPptx } from "../render/pptx.mjs";
 import { renderWebsite } from "../render/website.mjs";
 import { renderChecklistXlsx } from "../render/sheets.mjs";
@@ -91,20 +93,60 @@ Return one JSON object:
 {
   "post": "<full post text, line breaks as \\n, hashtags on the final line>",
   "characterCount": <int>,
-  "suggestedImage": "<media.heroPhotoId>"   // omit if no photos in deal-facts
-}`,
+  "suggestedImage": "<media.heroPhotoId>",  // omit if no photos in deal-facts
+  "imageCard": {                            // copy printed ON the share image — keep it minimal
+    "kicker": "<"OFFERS DUE <MONTH D>" when deal-facts has a deadline, else "NOW ON MARKET">",
+    "headline": "<property name, ≤ 40 chars — e.g. "Tara Oceanside Apartment Homes">",
+    "subline": "<type · N units · city, state — e.g. "Multifamily · 62 Units · Oceanside, CA">",
+    "stats": [ { "label": "Asking Price", "value": "$10,900,000" }, { "label": "Cap Rate", "value": "6.33%" } ],
+    "brokerLine": "Name · Firm"
+  }
+}
+
+imageCard: asking price is ALWAYS the first stat when priced (unpriced deals
+lead with the strongest approved number); at most one more proof number.
+Values come from deal-facts only; omit any key whose facts aren't there.
+The harness renders the card in the deal's own brand with the broker's
+extracted logo (never CRE Northstar's) at 1200×627, 1080×1080, and
+1080×1920.`,
     async render(spec, ctx) {
       const out = path.join(ctx.outDir, "linkedin-announcement.txt");
       fs.writeFileSync(out, spec.post + "\n");
-      const files = [out];
-      if (ctx.heroPath) {
-        // LinkedIn single-image link post spec: 1200×627 (1.91:1)
-        const img = path.join(ctx.outDir, "linkedin-image.jpg");
-        const j = await Jimp.read(ctx.heroPath);
-        await j.cover(1200, 627).quality(85).writeAsync(img);
-        files.push(img);
-      }
-      return files;
+      const images = await renderLinkedInImages(spec.imageCard, ctx);
+      return [out, ...images];
+    },
+  },
+
+  "sales-script": {
+    prompt: "outputs/sales-script.md",
+    internal: true, // broker's own call sheet — never in the marketing export
+    contract: `
+## Output contract (harness)
+
+Return one JSON object — the call-script spec:
+
+{
+  "docTitle": "<property name> — Investor Call Script",
+  "subtitle": "<property type · N units · city, state>",
+  "meta": "Internal — broker use only",
+  "sections": [
+    { "heading": "Opening — 15 seconds",
+      "coach": "<≤ 15 words — delivery note, italic on the page>",
+      "say": ["<verbatim line the broker reads aloud>", "…"] }
+  ],
+  "objections": [ { "objection": "\\"Just send me the OM.\\"", "response": "<2–3 spoken sentences>" } ],
+  "voicemail": ["<line>", "…"],
+  "footerLines": [ "Name · Firm", "phone · email" ]
+}
+
+Sections in your instructions' order. Every number from deal-facts only;
+broker track-record claims are bracketed slots, never invented.`,
+    async render(spec, ctx) {
+      const docx = path.join(ctx.outDir, "sales-script.docx");
+      const html = path.join(ctx.outDir, "sales-script.html");
+      await renderScriptDocx(spec, docx);
+      renderScriptHtml(spec, html);
+      return [docx, html];
     },
   },
 
@@ -154,6 +196,96 @@ Return one JSON object:
 </body></html>`
       );
       return [txt, html];
+    },
+  },
+
+  "email-drip": {
+    prompt: "outputs/email-drip.md",
+    internal: false,
+    contract: `
+## Output contract (harness)
+
+Return one JSON object — the drip-sequence spec:
+
+{
+  "docTitle": "<property name> — Email Campaign",
+  "meta": "4 touches · launch to offers due",
+  "emails": [
+    { "send": "Day 0 — launch",
+      "purpose": "<one line — what this touch does>",
+      "subjectOptions": ["…", "…"],        // ≤ 55 chars, no | • — / separators (deliverability)
+      "body": "<full email body, line breaks as \\n, {FIRST_NAME} greeting token>" }
+  ],
+  "signatureLines": ["Name", "Firm", "phone · email"]
+}
+
+3–4 emails per your instructions. Anchor "send" to real dates when
+deal-facts has an offer deadline, day offsets otherwise.`,
+    postProcess(spec) {
+      for (const e of spec.emails ?? [])
+        e.subjectOptions = (e.subjectOptions ?? []).map((s) =>
+          String(s).replace(/\s*[|•·]+\s*/g, " ").replace(/\s+[—–/]\s+/g, ", ").replace(/\s{2,}/g, " ").trim()
+        );
+      return spec;
+    },
+    async render(spec, ctx) {
+      const txt = path.join(ctx.outDir, "email-drip.txt");
+      const html = path.join(ctx.outDir, "email-drip.html");
+      renderDrip(spec, txt, html);
+      return [txt, html];
+    },
+  },
+
+  "listing-copy": {
+    prompt: "outputs/listing-copy.md",
+    internal: false,
+    contract: `
+## Output contract (harness)
+
+Return one JSON object — the listing-site copy spec:
+
+{
+  "docTitle": "<property name> — Listing Site Copy",
+  "headline": "<≤ 100 chars — the LoopNet/Crexi listing headline>",
+  "summary": "<1–2 sentence teaser for the results-page card>",
+  "description": ["<paragraph>", "<paragraph>"],
+  "highlights": ["<bullet, ≤ 12 words>"],
+  "facts": [ { "label": "Asking Price", "value": "$10,900,000" } ]
+}
+
+Omit any key with no data.`,
+    async render(spec, ctx) {
+      const txt = path.join(ctx.outDir, "listing-copy.txt");
+      const html = path.join(ctx.outDir, "listing-copy.html");
+      renderListing(spec, txt, html);
+      return [txt, html];
+    },
+  },
+
+  "launch-calendar": {
+    prompt: "outputs/launch-calendar.md",
+    internal: true, // the broker's own campaign plan — not investor-facing
+    contract: `
+## Output contract (harness)
+
+Return one JSON object — the launch-timeline spec:
+
+{
+  "docTitle": "<property name> — Launch Calendar",
+  "meta": "<listing date> → <offers due, when present>",
+  "timeline": [
+    { "date": "YYYY-MM-DD", "channel": "LinkedIn|Email|Calls|Tours|Listing sites|Press|Deadline",
+      "title": "<the step>", "description": "<one line, which asset to use>" }
+  ]
+}
+
+Dates are real ISO dates: start at listingDate (given) and work back from
+deal-facts' offer deadline when present, else lay out a 4-week arc.`,
+    async render(spec, ctx) {
+      const html = path.join(ctx.outDir, "launch-calendar.html");
+      const ics = path.join(ctx.outDir, "launch-calendar.ics");
+      renderCalendar(spec, html, ics);
+      return [html, ics];
     },
   },
 
