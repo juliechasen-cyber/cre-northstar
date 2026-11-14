@@ -1,9 +1,3 @@
----
-noteId: "a25f2d90e05311f1b258611ef0aa5bcb"
-tags: []
-
----
-
 # CRE Northstar
 
 An AI deal-marketing pipeline for commercial real estate brokers. Upload an Offering Memo (plus an optional Rent Roll and T12), approve the extracted numbers, and get a full marketing package: 12 outputs, generated from facts the broker has signed off on.
