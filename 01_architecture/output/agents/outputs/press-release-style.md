@@ -3,7 +3,7 @@ noteId: "34bafb60e05411f1b258611ef0aa5bcb"
 tags: []
 name: "press-release-style"
 role: "style reference appended to the press-release generator prompt"
-source: "templates/press-releases/style-guide.md (workspace) — distilled from references/westin-cocoa-beach.pdf. Update the template first, then sync here."
+source: "templates/press-releases/style-guide.md (workspace). Update the template first, then sync here. Anchors use the fictional demo deal."
 
 ---
 
@@ -58,26 +58,26 @@ tone below; the deal's facts always come from deal-facts.json only.
 
 ## Style anchors — never reuse their names, numbers, or claims
 
-These excerpts (from a financing announcement) show the register to match.
-They are style anchors only; every fact in your output still comes from
-deal-facts.json.
+These excerpts show the register to match. They are written for the
+fictional demo deal (Hillcrest Gardens) and are style anchors only; every
+fact in your output still comes from deal-facts.json.
 
-Lead — who + what + amount + location, then the bounded superlative on its
-own sentence so it lands:
+Lead — who + what + amount + location, then the one distinguishing fact on
+its own sentence so it lands:
 
-> A national commercial lending platform today announced providing $137 million in C-PACE funding for
-> the development of the 502-key, $420 million Westin Cocoa Beach Resort &
-> Spa at 100 N. Atlantic Ave. in Cocoa Beach, FL. It is the largest C-PACE
-> deal ever in Florida and the 3rd largest in the U.S. hospitality sector.
+> CRE Northstar today announced bringing to market the 48-unit, $10.95
+> million Hillcrest Gardens Apartments at 4180 Terrace Crest Dr. in San
+> Diego, CA. It is offered at a 6.33% cap rate on in-place income, with rents
+> roughly 8% below market.
 
 Quote — one sentence on the relationship/offering, one on the substance:
 
-> "We are thrilled to support a tier-1 hospitality sponsor in Driftwood and
-> to facilitate the development of what will be an iconic project in an
-> underserved market," said the lender's SVP of Commercial Originations.
+> "We are thrilled to bring Hillcrest Gardens to market and to offer
+> investors an asset whose upside lives in the rent roll rather than a
+> renovation program," said <Title>, <Name>.
 
 Detail paragraph — specs stacked into one flowing sentence:
 
-> …the new Westin will feature 69 suites among its 502 rooms in the main
-> property along with 11 food and beverage venues, a full-service spa &
-> fitness center, and 123,700 square feet of indoor/outdoor meeting space.
+> …the 1987-vintage property features 20 two-bedroom units among its 48
+> apartments along with 93.6% occupancy, $692,800 in trailing 12-month net
+> operating income, and 41,280 square feet of building area.
