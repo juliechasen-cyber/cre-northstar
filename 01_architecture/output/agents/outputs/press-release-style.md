@@ -1,8 +1,10 @@
 ---
-name: press-release-style
-role: style reference appended to the press-release generator prompt
-source: templates/press-releases/style-guide.md (workspace) — distilled from
-  references/westin-cocoa-beach.pdf. Update the template first, then sync here.
+noteId: "34bafb60e05411f1b258611ef0aa5bcb"
+tags: []
+name: "press-release-style"
+role: "style reference appended to the press-release generator prompt"
+source: "templates/press-releases/style-guide.md (workspace) — distilled from references/westin-cocoa-beach.pdf. Update the template first, then sync here."
+
 ---
 
 # Press Release — Writing Style Reference
@@ -63,7 +65,7 @@ deal-facts.json.
 Lead — who + what + amount + location, then the bounded superlative on its
 own sentence so it lands:
 
-> Bayview PACE today announced providing $137 million in C-PACE funding for
+> A national commercial lending platform today announced providing $137 million in C-PACE funding for
 > the development of the 502-key, $420 million Westin Cocoa Beach Resort &
 > Spa at 100 N. Atlantic Ave. in Cocoa Beach, FL. It is the largest C-PACE
 > deal ever in Florida and the 3rd largest in the U.S. hospitality sector.
@@ -72,7 +74,7 @@ Quote — one sentence on the relationship/offering, one on the substance:
 
 > "We are thrilled to support a tier-1 hospitality sponsor in Driftwood and
 > to facilitate the development of what will be an iconic project in an
-> underserved market," said SVP of Commercial Originations, A.K Prabhakar.
+> underserved market," said the lender's SVP of Commercial Originations.
 
 Detail paragraph — specs stacked into one flowing sentence:
 
