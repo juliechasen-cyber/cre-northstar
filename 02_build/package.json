@@ -1,7 +1,7 @@
 {
   "name": "cre-northstar-pipeline",
   "version": "0.1.0",
-  "description": "",
+  "description": "CRE Northstar: AI deal-marketing pipeline for commercial real estate brokers",
   "main": "index.js",
   "scripts": {
     "pipeline": "node src/run.mjs",
@@ -9,8 +9,8 @@
     "dashboard": "node src/server.mjs"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Julie Chasen",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
