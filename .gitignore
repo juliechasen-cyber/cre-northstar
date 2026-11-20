@@ -20,3 +20,8 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Internal planning notes — kept local, not published
+CONTEXT.md
+PRD.md
+PROGRESS.md

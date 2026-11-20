@@ -9,8 +9,8 @@
 
 An AI deal-marketing workflow for CRE brokers. A broker uploads four raw
 inputs — Offering Memorandum, Rent Roll, T12, property photos — and gets
-back 9 pieces of ready-to-send marketing collateral. Full product context:
-[../../PRD.md](../../PRD.md).
+back 12 pieces of ready-to-send marketing collateral. Overview and demo:
+[../../README.md](../../README.md).
 
 ```
 UPLOAD                    EXTRACT                 APPROVE                ANALYZE              GENERATE (fan-out)
